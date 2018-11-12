@@ -1,0 +1,23 @@
+{
+  "name": "docxmerge",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "license": "MIT",
+  "dependencies": {
+    "@types/bluebird": "^3.5.24",
+    "@types/request": "^2.48.1",
+    "@types/yargs": "^12.0.1",
+    "bluebird": "^3.5.3",
+    "request": "^2.88.0",
+    "yargs": "^12.0.2"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@types/node": "^10.12.5",
+    "ts-node": "^7.0.1",
+    "typescript": "^3.1.6"
+  }
+}
