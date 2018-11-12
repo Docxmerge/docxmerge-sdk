@@ -1,0 +1,71 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.vanniktech:gradle-maven-publish-plugin:0.6.0'
+    }
+}
+
+plugins {
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.0'
+    id 'org.hidetake.swagger.generator' version '2.15.0'
+    id 'maven-publish'
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'com.docxmerge'
+            artifactId = 'api'
+            version = '1.0-SNAPSHOT'
+
+            from components.java
+        }
+    }
+}
+
+group 'com.docxmerge'
+version '1.0.1-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+dependencies {
+    // annotations for swagger-codegen code
+    compile 'io.swagger.core.v3:swagger-annotations:2.0.0'
+    compile 'com.squareup.okhttp:okhttp:2.7.5'
+    compile 'com.squareup.okhttp:logging-interceptor:2.7.5'
+    compile 'com.fasterxml.jackson.module:jackson-module-kotlin:2.8.8'
+    compile 'com.google.code.gson:gson:2.8.1'
+    compile 'io.gsonfire:gson-fire:1.8.3'
+    compile 'org.threeten:threetenbp:1.3.5'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    compile "org.jetbrains.kotlin:kotlin-reflect:1.3.0"
+    swaggerCodegen 'io.swagger.codegen.v3:swagger-codegen-cli:3.0.0'  // or Swagger Codegen V3
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+// generate swagger code
+swaggerSources {
+    docxmergeV1 {
+        inputFile = file('v1-docxmerge.json')
+        code {
+            language = 'java'
+        }
+    }
+}
+sourceSets.main.java.srcDir new File(buildDir, "swagger-code-docxmergeV1/src/main/java")
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+

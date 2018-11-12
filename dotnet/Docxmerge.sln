@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Docxmerge", "Docxmerge\Docxmerge.csproj", "{3ABE10B9-62CC-43A1-98B3-23CB9C61B26F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Docxmerge.Tools", "Docxmerge.Tools\Docxmerge.Tools.csproj", "{77E989CC-2616-4A4C-80D8-AB9BEE21649C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Docxmerge.Tests", "Docxmerge.Tests\Docxmerge.Tests.csproj", "{CD44E654-B614-4B74-ABC4-6F08F3174B8B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3ABE10B9-62CC-43A1-98B3-23CB9C61B26F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3ABE10B9-62CC-43A1-98B3-23CB9C61B26F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3ABE10B9-62CC-43A1-98B3-23CB9C61B26F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3ABE10B9-62CC-43A1-98B3-23CB9C61B26F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77E989CC-2616-4A4C-80D8-AB9BEE21649C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77E989CC-2616-4A4C-80D8-AB9BEE21649C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77E989CC-2616-4A4C-80D8-AB9BEE21649C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77E989CC-2616-4A4C-80D8-AB9BEE21649C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD44E654-B614-4B74-ABC4-6F08F3174B8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD44E654-B614-4B74-ABC4-6F08F3174B8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD44E654-B614-4B74-ABC4-6F08F3174B8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD44E654-B614-4B74-ABC4-6F08F3174B8B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
