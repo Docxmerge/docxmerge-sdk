@@ -1,0 +1,7 @@
+venv
+dist
+build
+docxmerge.egg-info
+__pycache__
+docxmerge_sdk.egg-info
+out.pdf
