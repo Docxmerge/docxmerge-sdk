@@ -2,3 +2,5 @@ out
 gradle
 build
 out.pdf
+nexus.properties
+secret2.gpg
