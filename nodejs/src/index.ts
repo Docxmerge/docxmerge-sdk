@@ -109,7 +109,7 @@ class Docxmerge {
       )
     })
   }
-  getRequestApi() {
+  private getRequestApi() {
     return request.defaults({
       json: true,
       headers: { ApiKey: this.apiKey },
