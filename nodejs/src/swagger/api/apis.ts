@@ -1,0 +1,13 @@
+export * from './apiApi';
+import { ApiApi } from './apiApi';
+export * from './configApi';
+import { ConfigApi } from './configApi';
+export * from './managementApi';
+import { ManagementApi } from './managementApi';
+export * from './paymentsApi';
+import { PaymentsApi } from './paymentsApi';
+export * from './pingApi';
+import { PingApi } from './pingApi';
+export * from './templatesApi';
+import { TemplatesApi } from './templatesApi';
+export const APIS = [ApiApi, ConfigApi, ManagementApi, PaymentsApi, PingApi, TemplatesApi];

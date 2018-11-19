@@ -12,12 +12,15 @@ interface ReportResponse {
   reportId: string
   content: Stream
 }
+const wordContentType =
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+const jsonContentType = "application/json"
 class Docxmerge {
   private templatesApi: TemplatesApi
   private apiApi: ApiApi
-  private readonly basePath = "https://api.docxmerge.com"
 
-  constructor(private apiKey: string) {
+  constructor(private apiKey: string, private readonly basePath) {
+    basePath = basePath || "https://api.docxmerge.com"
     const auth = new ApiKeyAuth("header", "ApiKey")
     auth.apiKey = apiKey
 
@@ -35,38 +38,11 @@ class Docxmerge {
   getReportById(tenant: string, id: string) {
     return this.templatesApi.apiByTenantReportsByIdGet(id, tenant)
   }
-  renderFile(file: Buffer, data: any) {
-    return new Promise<Buffer>((resolve, reject) => {
-      this.getRequestApi().post(
-        "/print",
-        {
-          encoding: null,
-          formData: {
-            document: {
-              value: file,
-              options: {
-                filename: "diploma.docx",
-                contentType:
-                  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-              },
-            },
-            data: {
-              value: Buffer.from(JSON.stringify(data)),
-              options: {
-                filename: "data.json",
-                contentType: "application/json",
-              },
-            },
-          },
-        },
-        (err, res) => {
-          if (err) {
-            return reject(err)
-          }
-          resolve(res.body)
-        },
-      )
-    })
+  renderFile(file: Buffer, data: KeyValue) {
+    return this.apiApi.apiPrintPost(
+      this.getDocxFormFile(file),
+      this.getJsonFormFile(data),
+    )
   }
   renderTemplate(
     tenant: string,
@@ -108,6 +84,36 @@ class Docxmerge {
         },
       )
     })
+  }
+  mergeTemplate(tenant: string, file: Buffer, data: KeyValue = {}) {
+    return this.templatesApi.apiByTenantMergePost(
+      tenant,
+      this.getDocxFormFile(file),
+      this.getJsonFormFile(data),
+    )
+  }
+  private getDocxFormFile(file: Buffer) {
+    return this.getFormFile(file, "file.docx", wordContentType)
+  }
+  private getJsonFormFile(data: KeyValue) {
+    return this.getFormFile(
+      Buffer.from(JSON.stringify(data)),
+      "file.json",
+      jsonContentType,
+    )
+  }
+  private getFormFile(
+    file: Buffer,
+    filename: string = "file",
+    contentType: string = "application/octet-stream",
+  ): any {
+    return {
+      value: file,
+      options: {
+        filename,
+        contentType,
+      },
+    }
   }
   private getRequestApi() {
     return request.defaults({

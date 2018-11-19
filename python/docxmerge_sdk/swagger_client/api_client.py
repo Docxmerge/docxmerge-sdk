@@ -22,9 +22,9 @@ import tempfile
 import six
 from six.moves.urllib.parse import quote
 
-from docxmerge_sdk.swagger_client.configuration import Configuration
-import docxmerge_sdk.swagger_client.models
-from docxmerge_sdk.swagger_client import rest
+from docxmerge_replace_me.configuration import Configuration
+import docxmerge_replace_me.models
+from docxmerge_replace_me import rest
 
 
 class ApiClient(object):
@@ -257,7 +257,7 @@ class ApiClient(object):
             if klass in self.NATIVE_TYPES_MAPPING:
                 klass = self.NATIVE_TYPES_MAPPING[klass]
             else:
-                klass = getattr(docxmerge_sdk.swagger_client.models, klass)
+                klass = getattr(docxmerge_replace_me.models, klass)
 
         if klass in self.PRIMITIVE_TYPES:
             return self.__deserialize_primitive(data, klass)

@@ -1,8 +1,8 @@
-const Docxmerge = require("../")
+const Docxmerge = require("../dist")
 const fs = require("fs")
 const path = require("path")
-
-const docxmerge = new Docxmerge()
+const { apikey, tenantId, endpoint } = require("./config")
+const docxmerge = new Docxmerge(apikey, endpoint)
 async function main() {
   docxmerge
     .renderFile(fs.readFileSync(path.join(__dirname, "diploma.docx")), {
@@ -21,11 +21,10 @@ async function main() {
       "Principal:": "Principal",
     })
     .then(async res => {
-      fs.writeFileSync(path.join(__dirname, "out.pdf"), res)
+      fs.writeFileSync(path.join(__dirname, "out.pdf"), res.body)
     })
     .catch(err => {
-      console.log(err.response.statusCode)
-      console.log(err.response.body.toString())
+      console.log(JSON.stringify(err))
     })
 }
 main()

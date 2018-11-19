@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="docxmerge_sdk",
-    version="0.0.3",
+    version="0.0.4",
     author="David viejo pomata",
     author_email="davidviejopomata@gmail.com",
     description="Sdk for docxmerge",

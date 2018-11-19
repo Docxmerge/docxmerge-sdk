@@ -14,7 +14,7 @@ open class Docxmerge(apiKey: String, private var tenant: String) {
     private var templatesApi: TemplatesApi
     private var apiApi: ApiApi
     private var apiClient: ApiClient = ApiClient()
-    val mapper = ObjectMapper()
+    private val mapper = ObjectMapper()
 
     init {
         val auth = apiClient.getAuthentication("ApiKey") as ApiKeyAuth
@@ -55,5 +55,14 @@ open class Docxmerge(apiKey: String, private var tenant: String) {
             attributes,
             env
         )
+    }
+
+    fun mergeDocx(document: File, data: Map<String, Any>): File? {
+        val dataFile = File.createTempFile("prefix-", "-json")
+
+        val text = mapper.writeValueAsString(data)
+        dataFile.writeText(text)
+        dataFile.deleteOnExit()
+        return templatesApi.apiByTenantMergePost(tenant, document, dataFile)
     }
 }

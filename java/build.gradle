@@ -4,12 +4,14 @@ buildscript {
     }
     dependencies {
         classpath 'com.vanniktech:gradle-maven-publish-plugin:0.6.0'
+        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.12.0"
     }
 }
 
 plugins {
     id 'java'
     id 'org.jetbrains.kotlin.jvm' version '1.3.0'
+    id 'io.codearte.nexus-staging' version '0.12.0'
     id 'org.hidetake.swagger.generator' version '2.15.0'
     id 'signing'
     id 'com.vanniktech.maven.publish' version '0.6.0'
@@ -31,7 +33,15 @@ mavenPublish {
     repositoryPassword = props.getProperty("sonatypePassword")
 }
 
+
 group 'com.docxmerge'
+
+nexusStaging {
+    serverUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+    user = props.getProperty("sonatypeUsername")
+    password = props.getProperty("sonatypePassword")
+}
+
 
 sourceCompatibility = 1.8
 

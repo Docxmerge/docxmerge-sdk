@@ -16,4 +16,10 @@
       <ProjectReference Include="..\Docxmerge\Docxmerge.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="helloworld.docx">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

@@ -27,11 +27,14 @@ class Docxmerge:
     def render_file(self, document, data={}):
         with tempfile.NamedTemporaryFile() as fp:
             fp.write(json.dumps(data).encode('utf-8'))
-            # fp.seek(0)
             fp.flush()
-            print(fp.name)
-            # with open(fp.name, "rb", opener=temp_opener) as f:
             return self.api_api.api_print_post(document.name, fp.name)
+
+    def merge_template(self, tenant, document, data={}):
+        with tempfile.NamedTemporaryFile() as fp:
+            fp.write(json.dumps(data).encode('utf-8'))
+            fp.flush()
+            return self.api_templates.api_by_tenant_merge_post(tenant, document.name, fp.name)
 
 
 def temp_opener(name, flag, mode=0o777):
