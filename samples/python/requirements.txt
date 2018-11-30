@@ -1,1 +1,1 @@
-docxmerge-sdk==0.0.7
+docxmerge-sdk==0.0.8

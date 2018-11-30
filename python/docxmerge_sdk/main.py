@@ -7,13 +7,13 @@ import docxmerge_sdk.swagger_client as swagger
 
 
 class Docxmerge:
-    def __init__(self, apikey=""):
+    def __init__(self, apikey="", host = "https://api.docxmerge.com"):
         configuration = swagger.configuration.Configuration()
         if apikey != "":
             configuration.api_key = {
                 'ApiKey': apikey
             }
-        configuration.host = "https://api.docxmerge.com"
+        configuration.host = host
         api_client = swagger.ApiClient(configuration)
         if apikey != "":
             api_client.default_headers = {'ApiKey': apikey}
@@ -24,11 +24,11 @@ class Docxmerge:
     def get_templates(self, tenant, page, size):
         return self.api_templates.api_by_tenant_templates_get(tenant, page=page, size=size)
 
-    def render_file(self, document, data={}):
+    def render_file(self, tenantid, document, data={}):
         with tempfile.NamedTemporaryFile() as fp:
             fp.write(json.dumps(data).encode('utf-8'))
             fp.flush()
-            return self.api_api.api_print_post(document.name, fp.name)
+            return self.api_templates.api_by_tenant_print_post(tenantid, document.name, fp.name,)
 
     def merge_template(self, tenant, document, data={}):
         with tempfile.NamedTemporaryFile() as fp:
