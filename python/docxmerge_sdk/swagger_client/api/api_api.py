@@ -17,7 +17,7 @@ import re  # noqa: F401
 # python 2 and python 3 compatibility library
 import six
 
-from docxmerge_replace_me.api_client import ApiClient
+from docxmerge_sdk.swagger_client.api_client import ApiClient
 
 
 class ApiApi(object):

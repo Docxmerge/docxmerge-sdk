@@ -17,7 +17,7 @@ import re  # noqa: F401
 # python 2 and python 3 compatibility library
 import six
 
-from docxmerge_replace_me.api_client import ApiClient
+from docxmerge_sdk.swagger_client.api_client import ApiClient
 
 
 class TemplatesApi(object):
@@ -43,7 +43,7 @@ class TemplatesApi(object):
         :param async_req bool
         :param str tenant: (required)
         :param file document: Template file (required)
-        :return: Stream
+        :return: file
                  If the method is called asynchronously,
                  returns the request thread.
         """
@@ -65,7 +65,7 @@ class TemplatesApi(object):
         :param async_req bool
         :param str tenant: (required)
         :param file document: Template file (required)
-        :return: Stream
+        :return: file
                  If the method is called asynchronously,
                  returns the request thread.
         """
@@ -113,7 +113,7 @@ class TemplatesApi(object):
         body_params = None
         # HTTP header `Accept`
         header_params['Accept'] = self.api_client.select_header_accept(
-            ['text/plain', 'application/json', 'text/json'])  # noqa: E501
+            ['application/octet-stream'])  # noqa: E501
 
         # HTTP header `Content-Type`
         header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
@@ -130,7 +130,7 @@ class TemplatesApi(object):
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='Stream',  # noqa: E501
+            response_type='file',  # noqa: E501
             auth_settings=auth_settings,
             async_req=local_var_params.get('async_req'),
             _return_http_data_only=local_var_params.get('_return_http_data_only'),  # noqa: E501
@@ -370,8 +370,7 @@ class TemplatesApi(object):
         :param str tenant: (required)
         :param file document: Template file (required)
         :param file data: Json data (required)
-        :param str tenant_id:
-        :return: Stream
+        :return: file
                  If the method is called asynchronously,
                  returns the request thread.
         """
@@ -394,15 +393,14 @@ class TemplatesApi(object):
         :param str tenant: (required)
         :param file document: Template file (required)
         :param file data: Json data (required)
-        :param str tenant_id:
-        :return: Stream
+        :return: file
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
         local_var_params = locals()
 
-        all_params = ['tenant', 'document', 'data', 'tenant_id']  # noqa: E501
+        all_params = ['tenant', 'document', 'data']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -436,8 +434,6 @@ class TemplatesApi(object):
             path_params['tenant'] = local_var_params['tenant']  # noqa: E501
 
         query_params = []
-        if 'tenant_id' in local_var_params:
-            query_params.append(('tenantId', local_var_params['tenant_id']))  # noqa: E501
 
         header_params = {}
 
@@ -451,7 +447,7 @@ class TemplatesApi(object):
         body_params = None
         # HTTP header `Accept`
         header_params['Accept'] = self.api_client.select_header_accept(
-            ['text/plain', 'application/json', 'text/json'])  # noqa: E501
+            ['application/octet-stream'])  # noqa: E501
 
         # HTTP header `Content-Type`
         header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
@@ -468,7 +464,7 @@ class TemplatesApi(object):
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='Stream',  # noqa: E501
+            response_type='file',  # noqa: E501
             auth_settings=auth_settings,
             async_req=local_var_params.get('async_req'),
             _return_http_data_only=local_var_params.get('_return_http_data_only'),  # noqa: E501
