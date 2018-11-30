@@ -43,6 +43,12 @@ namespace Docxmerge
             _apiClient = new DocxmergeApi(basePath, apikey);
         }
 
+        public async Task<System.IO.Stream> RenderFile<T>(string tenant, System.IO.Stream document, T data)
+        {
+            var renderFile = await _apiClient.ApiByTenantPrintPostAsync(tenant, new FileParameter(document),new FileParameter(ObjectToStream(data)));
+            return renderFile.Stream;
+        }
+
         public async Task<System.IO.Stream> RenderTemplate<T>(string tenantId, string templateName,
             T data,
             int version,

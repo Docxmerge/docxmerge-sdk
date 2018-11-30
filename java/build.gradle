@@ -36,11 +36,6 @@ mavenPublish {
 
 group 'com.docxmerge'
 
-nexusStaging {
-    serverUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
-    user = props.getProperty("sonatypeUsername")
-    password = props.getProperty("sonatypePassword")
-}
 
 
 sourceCompatibility = 1.8

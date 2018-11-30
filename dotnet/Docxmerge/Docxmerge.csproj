@@ -4,7 +4,7 @@
     <PropertyGroup>
         <TargetFramework>netcoreapp2.1</TargetFramework>
         <PackageId>Docxmerge</PackageId>
-        <Version>1.0.7</Version>
+        <Version>1.0.8</Version>
         <Authors>DavidViejoPomata</Authors>
         <Company>Docxmerge</Company>
     </PropertyGroup>

@@ -8,7 +8,7 @@ namespace Docxmerge.Tools
     {
         static void Main(string[] args)
         {
-            var document = SwaggerDocument.FromUrlAsync("https://api.docxmerge.com/api/swagger/v1/swagger.json").Result;
+           var document = SwaggerDocument.FromUrlAsync("https://api.docxmerge.com/api/swagger/v1/swagger.json").Result;
 
             var clientSettings = new SwaggerToCSharpClientGeneratorSettings
             {
