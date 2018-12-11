@@ -9,8 +9,9 @@ namespace Docxmerge.Tests
 {
     public class UnitTest1
     {
-        private const string tenantId = "de9a2bfd-86be-470d-a549-bd09fb1b1d2b";
-        private const string apikey = "06a468217a55439690c4eefbb94791e4";
+        private const string tenantId = "f60b0638-2f2e-4f92-b027-39cedfa06d4d";
+        private const string apikey = "8f22c304d0b44af2b03c2ad3d1aa5471";
+
         [Fact]
         public async Task TestMerge()
         {
@@ -24,7 +25,29 @@ namespace Docxmerge.Tests
             await stream.CopyToAsync(destFile);
             destFile.Close();
         }
-        
+
+        [Fact]
+        public async Task TestConversion()
+        {
+            var docxmerge = GetDocxmerge();
+            var fileStream = File.Open("./helloworld.docx", FileMode.Open);
+            var stream = await docxmerge.ConvertFile(tenantId, fileStream);
+            var destFile = File.OpenWrite("./helloworld_convert.docx");
+            await stream.CopyToAsync(destFile);
+            destFile.Close();
+        }
+
+        [Fact]
+        public async Task TestTemplateConversion()
+        {
+            var docxmerge = GetDocxmerge();
+            var stream =
+                await docxmerge.ConvertTemplate(tenantId, "Hello world", 1, new Dictionary<string, string> { });
+            var destFile = File.OpenWrite("./helloworld_convert_2.pdf");
+            await stream.CopyToAsync(destFile);
+            destFile.Close();
+        }
+
         [Fact]
         public async Task TestPrint()
         {
@@ -41,7 +64,7 @@ namespace Docxmerge.Tests
 
         private Docxmerge GetDocxmerge()
         {
-            return new Docxmerge(apikey, "http://localhost:5030");            
+            return new Docxmerge(apikey, "http://localhost:5030");
         }
     }
 }

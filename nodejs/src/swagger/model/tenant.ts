@@ -11,6 +11,7 @@
  */
 
 import { Invitation } from './invitation';
+import { Template } from './template';
 import { TenantUser } from './tenantUser';
 
 export class Tenant {
@@ -19,6 +20,7 @@ export class Tenant {
     'modified'?: Date;
     'name'?: string;
     'apiKey'?: string;
+    'templates'?: Array<Template>;
     'users'?: Array<TenantUser>;
     'invitations'?: Array<Invitation>;
 
@@ -49,6 +51,11 @@ export class Tenant {
             "name": "apiKey",
             "baseName": "apiKey",
             "type": "string"
+        },
+        {
+            "name": "templates",
+            "baseName": "templates",
+            "type": "Array<Template>"
         },
         {
             "name": "users",

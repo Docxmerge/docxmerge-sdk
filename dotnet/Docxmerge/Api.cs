@@ -134,6 +134,103 @@ namespace Docxmerge
             }
         }
     
+        /// <returns>Success</returns>
+        /// <exception cref="SwaggerException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<FileResponse> ApiHydratePostAsync(FileParameter document, bool? fillBorders)
+        {
+            return ApiHydratePostAsync(document, fillBorders, System.Threading.CancellationToken.None);
+        }
+    
+        /// <returns>Success</returns>
+        /// <exception cref="SwaggerException">A server side error occurred.</exception>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        public async System.Threading.Tasks.Task<FileResponse> ApiHydratePostAsync(FileParameter document, bool? fillBorders, System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/hydrate?");
+            if (fillBorders != null) 
+            {
+                urlBuilder_.Append("fillBorders=").Append(System.Uri.EscapeDataString(ConvertToString(fillBorders, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            urlBuilder_.Length--;
+    
+            var client_ = new System.Net.Http.HttpClient();
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var boundary_ = System.Guid.NewGuid().ToString();
+                    var content_ = new System.Net.Http.MultipartFormDataContent(boundary_);
+                    content_.Headers.Remove("Content-Type");
+                    content_.Headers.TryAddWithoutValidation("Content-Type", "multipart/form-data; boundary=" + boundary_);
+                    if (document == null)
+                        throw new System.ArgumentNullException("document");
+                    else
+                        content_.Add(new System.Net.Http.StreamContent(document.Data), "document", document.FileName ?? "document");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/octet-stream"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = ((int)response_.StatusCode).ToString();
+                        if (status_ == "200" || status_ == "206") 
+                        {
+                            var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await response_.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                            var fileResponse_ = new FileResponse((int)response_.StatusCode, headers_, responseStream_, client_, response_); 
+                            client_ = null; response_ = null; // response and client are disposed by FileResponse
+                            return fileResponse_;
+                        }
+                        else
+                        if (status_ == "400") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new SwaggerException("Validation failed / Incorrect parameters", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new SwaggerException("Unauthorized", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ != "200" && status_ != "204")
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new SwaggerException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+            
+                        return default(FileResponse);
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (client_ != null)
+                    client_.Dispose();
+            }
+        }
+    
         /// <summary>Get json example from file</summary>
         /// <param name="document">Template document</param>
         /// <returns>Success</returns>
@@ -3689,7 +3786,116 @@ namespace Docxmerge
     
         /// <returns>Success</returns>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<Report> ApiByTenantTemplatesByTemplateNameRenderPostAsync(string templateName, string tenant, int? version, bool? debug, System.Collections.Generic.IDictionary<string, object> json, object queryAttributes, Env? env)
+        public System.Threading.Tasks.Task<FileResponse> ApiByTenantTemplatesByTemplateNameConvertPostAsync(string templateName, string tenant, int? version, bool? debug, object queryAttributes, Env? env)
+        {
+            return ApiByTenantTemplatesByTemplateNameConvertPostAsync(templateName, tenant, version, debug, queryAttributes, env, System.Threading.CancellationToken.None);
+        }
+    
+        /// <returns>Success</returns>
+        /// <exception cref="SwaggerException">A server side error occurred.</exception>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        public async System.Threading.Tasks.Task<FileResponse> ApiByTenantTemplatesByTemplateNameConvertPostAsync(string templateName, string tenant, int? version, bool? debug, object queryAttributes, Env? env, System.Threading.CancellationToken cancellationToken)
+        {
+            if (templateName == null)
+                throw new System.ArgumentNullException("templateName");
+    
+            if (tenant == null)
+                throw new System.ArgumentNullException("tenant");
+    
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/{tenant}/templates/{templateName}/convert?");
+            urlBuilder_.Replace("{templateName}", System.Uri.EscapeDataString(ConvertToString(templateName, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Replace("{tenant}", System.Uri.EscapeDataString(ConvertToString(tenant, System.Globalization.CultureInfo.InvariantCulture)));
+            if (version != null) 
+            {
+                urlBuilder_.Append("version=").Append(System.Uri.EscapeDataString(ConvertToString(version, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            if (debug != null) 
+            {
+                urlBuilder_.Append("debug=").Append(System.Uri.EscapeDataString(ConvertToString(debug, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            if (queryAttributes != null) 
+            {
+                urlBuilder_.Append("queryAttributes=").Append(System.Uri.EscapeDataString(ConvertToString(queryAttributes, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            if (env != null) 
+            {
+                urlBuilder_.Append("env=").Append(System.Uri.EscapeDataString(ConvertToString(env, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            urlBuilder_.Length--;
+    
+            var client_ = new System.Net.Http.HttpClient();
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Content = new System.Net.Http.StringContent(string.Empty, System.Text.Encoding.UTF8, "application/octet-stream");
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/octet-stream"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = ((int)response_.StatusCode).ToString();
+                        if (status_ == "200" || status_ == "206") 
+                        {
+                            var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await response_.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                            var fileResponse_ = new FileResponse((int)response_.StatusCode, headers_, responseStream_, client_, response_); 
+                            client_ = null; response_ = null; // response and client are disposed by FileResponse
+                            return fileResponse_;
+                        }
+                        else
+                        if (status_ == "400") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new SwaggerException("Validation failed / Incorrect parameters", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new SwaggerException("Unauthorized", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ != "200" && status_ != "204")
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new SwaggerException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+            
+                        return default(FileResponse);
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (client_ != null)
+                    client_.Dispose();
+            }
+        }
+    
+        /// <returns>Success</returns>
+        /// <exception cref="SwaggerException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<Report> ApiByTenantTemplatesByTemplateNameRenderPostAsync(string templateName, string tenant, int? version, bool? debug, System.Collections.Generic.IDictionary<string, object> json, object queryAttributes, Env2? env)
         {
             return ApiByTenantTemplatesByTemplateNameRenderPostAsync(templateName, tenant, version, debug, json, queryAttributes, env, System.Threading.CancellationToken.None);
         }
@@ -3697,7 +3903,7 @@ namespace Docxmerge
         /// <returns>Success</returns>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async System.Threading.Tasks.Task<Report> ApiByTenantTemplatesByTemplateNameRenderPostAsync(string templateName, string tenant, int? version, bool? debug, System.Collections.Generic.IDictionary<string, object> json, object queryAttributes, Env? env, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<Report> ApiByTenantTemplatesByTemplateNameRenderPostAsync(string templateName, string tenant, int? version, bool? debug, System.Collections.Generic.IDictionary<string, object> json, object queryAttributes, Env2? env, System.Threading.CancellationToken cancellationToken)
         {
             if (templateName == null)
                 throw new System.ArgumentNullException("templateName");
@@ -5111,6 +5317,7 @@ namespace Docxmerge
         private System.DateTime? _modified;
         private string _name;
         private string _apiKey;
+        private System.Collections.ObjectModel.ObservableCollection<Template> _templates;
         private System.Collections.ObjectModel.ObservableCollection<TenantUser> _users;
         private System.Collections.ObjectModel.ObservableCollection<Invitation> _invitations;
     
@@ -5184,6 +5391,20 @@ namespace Docxmerge
             }
         }
     
+        [Newtonsoft.Json.JsonProperty("templates", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.ObjectModel.ObservableCollection<Template> Templates
+        {
+            get { return _templates; }
+            set 
+            {
+                if (_templates != value)
+                {
+                    _templates = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
         [Newtonsoft.Json.JsonProperty("users", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.ObjectModel.ObservableCollection<TenantUser> Users
         {
@@ -5220,6 +5441,152 @@ namespace Docxmerge
         public static Tenant FromJson(string data)
         {
             return Newtonsoft.Json.JsonConvert.DeserializeObject<Tenant>(data);
+        }
+    
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected virtual void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            var handler = PropertyChanged;
+            if (handler != null) 
+                handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.11.0.0 (Newtonsoft.Json v9.0.0.0)")]
+    public partial class Template : System.ComponentModel.INotifyPropertyChanged
+    {
+        private string _name;
+        private System.Collections.ObjectModel.ObservableCollection<TemplateGroup> _templateGroups;
+        private System.Collections.ObjectModel.ObservableCollection<TemplateVersionFile> _templateVersionFiles;
+        private string _id;
+        private System.DateTime? _created;
+        private System.DateTime? _modified;
+        private Tenant _tenant;
+        private string _tenantId;
+    
+        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Name
+        {
+            get { return _name; }
+            set 
+            {
+                if (_name != value)
+                {
+                    _name = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("templateGroups", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.ObjectModel.ObservableCollection<TemplateGroup> TemplateGroups
+        {
+            get { return _templateGroups; }
+            set 
+            {
+                if (_templateGroups != value)
+                {
+                    _templateGroups = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("templateVersionFiles", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.ObjectModel.ObservableCollection<TemplateVersionFile> TemplateVersionFiles
+        {
+            get { return _templateVersionFiles; }
+            set 
+            {
+                if (_templateVersionFiles != value)
+                {
+                    _templateVersionFiles = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Id
+        {
+            get { return _id; }
+            set 
+            {
+                if (_id != value)
+                {
+                    _id = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("created", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime? Created
+        {
+            get { return _created; }
+            set 
+            {
+                if (_created != value)
+                {
+                    _created = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("modified", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime? Modified
+        {
+            get { return _modified; }
+            set 
+            {
+                if (_modified != value)
+                {
+                    _modified = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("tenant", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Tenant Tenant
+        {
+            get { return _tenant; }
+            set 
+            {
+                if (_tenant != value)
+                {
+                    _tenant = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("tenantId", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string TenantId
+        {
+            get { return _tenantId; }
+            set 
+            {
+                if (_tenantId != value)
+                {
+                    _tenantId = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+        
+        public static Template FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<Template>(data);
         }
     
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
@@ -5343,7 +5710,8 @@ namespace Docxmerge
             }
         }
     
-        [Newtonsoft.Json.JsonProperty("tenantId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("tenantId", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public string TenantId
         {
             get { return _tenantId; }
@@ -5488,7 +5856,8 @@ namespace Docxmerge
             }
         }
     
-        [Newtonsoft.Json.JsonProperty("tenantId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("tenantId", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public string TenantId
         {
             get { return _tenantId; }
@@ -5510,6 +5879,404 @@ namespace Docxmerge
         public static Invitation FromJson(string data)
         {
             return Newtonsoft.Json.JsonConvert.DeserializeObject<Invitation>(data);
+        }
+    
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected virtual void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            var handler = PropertyChanged;
+            if (handler != null) 
+                handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.11.0.0 (Newtonsoft.Json v9.0.0.0)")]
+    public partial class TemplateGroup : System.ComponentModel.INotifyPropertyChanged
+    {
+        private Template _template;
+        private string _templateId;
+        private Group _group;
+        private string _groupId;
+        private string _id;
+        private System.DateTime? _created;
+        private System.DateTime? _modified;
+        private Tenant _tenant;
+        private string _tenantId;
+    
+        [Newtonsoft.Json.JsonProperty("template", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Template Template
+        {
+            get { return _template; }
+            set 
+            {
+                if (_template != value)
+                {
+                    _template = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("templateId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string TemplateId
+        {
+            get { return _templateId; }
+            set 
+            {
+                if (_templateId != value)
+                {
+                    _templateId = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("group", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Group Group
+        {
+            get { return _group; }
+            set 
+            {
+                if (_group != value)
+                {
+                    _group = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("groupId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string GroupId
+        {
+            get { return _groupId; }
+            set 
+            {
+                if (_groupId != value)
+                {
+                    _groupId = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Id
+        {
+            get { return _id; }
+            set 
+            {
+                if (_id != value)
+                {
+                    _id = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("created", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime? Created
+        {
+            get { return _created; }
+            set 
+            {
+                if (_created != value)
+                {
+                    _created = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("modified", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime? Modified
+        {
+            get { return _modified; }
+            set 
+            {
+                if (_modified != value)
+                {
+                    _modified = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("tenant", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Tenant Tenant
+        {
+            get { return _tenant; }
+            set 
+            {
+                if (_tenant != value)
+                {
+                    _tenant = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("tenantId", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string TenantId
+        {
+            get { return _tenantId; }
+            set 
+            {
+                if (_tenantId != value)
+                {
+                    _tenantId = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+        
+        public static TemplateGroup FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<TemplateGroup>(data);
+        }
+    
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected virtual void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            var handler = PropertyChanged;
+            if (handler != null) 
+                handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.11.0.0 (Newtonsoft.Json v9.0.0.0)")]
+    public partial class TemplateVersionFile : System.ComponentModel.INotifyPropertyChanged
+    {
+        private Template _template;
+        private string _templateId;
+        private string _appFileId;
+        private AppFile _appFile;
+        private TemplateVersionFileStatus? _status;
+        private int? _version;
+        private System.Collections.ObjectModel.ObservableCollection<string> _attributes;
+        private System.Collections.Generic.Dictionary<string, object> _example;
+        private System.Collections.ObjectModel.ObservableCollection<Report> _reports;
+        private string _id;
+        private System.DateTime? _created;
+        private System.DateTime? _modified;
+        private Tenant _tenant;
+        private string _tenantId;
+    
+        [Newtonsoft.Json.JsonProperty("template", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Template Template
+        {
+            get { return _template; }
+            set 
+            {
+                if (_template != value)
+                {
+                    _template = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("templateId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string TemplateId
+        {
+            get { return _templateId; }
+            set 
+            {
+                if (_templateId != value)
+                {
+                    _templateId = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("appFileId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string AppFileId
+        {
+            get { return _appFileId; }
+            set 
+            {
+                if (_appFileId != value)
+                {
+                    _appFileId = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("appFile", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public AppFile AppFile
+        {
+            get { return _appFile; }
+            set 
+            {
+                if (_appFile != value)
+                {
+                    _appFile = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("status", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public TemplateVersionFileStatus? Status
+        {
+            get { return _status; }
+            set 
+            {
+                if (_status != value)
+                {
+                    _status = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("version", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? Version
+        {
+            get { return _version; }
+            set 
+            {
+                if (_version != value)
+                {
+                    _version = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("attributes", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.ObjectModel.ObservableCollection<string> Attributes
+        {
+            get { return _attributes; }
+            set 
+            {
+                if (_attributes != value)
+                {
+                    _attributes = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("example", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.Dictionary<string, object> Example
+        {
+            get { return _example; }
+            set 
+            {
+                if (_example != value)
+                {
+                    _example = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("reports", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.ObjectModel.ObservableCollection<Report> Reports
+        {
+            get { return _reports; }
+            set 
+            {
+                if (_reports != value)
+                {
+                    _reports = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Id
+        {
+            get { return _id; }
+            set 
+            {
+                if (_id != value)
+                {
+                    _id = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("created", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime? Created
+        {
+            get { return _created; }
+            set 
+            {
+                if (_created != value)
+                {
+                    _created = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("modified", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime? Modified
+        {
+            get { return _modified; }
+            set 
+            {
+                if (_modified != value)
+                {
+                    _modified = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("tenant", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Tenant Tenant
+        {
+            get { return _tenant; }
+            set 
+            {
+                if (_tenant != value)
+                {
+                    _tenant = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("tenantId", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string TenantId
+        {
+            get { return _tenantId; }
+            set 
+            {
+                if (_tenantId != value)
+                {
+                    _tenantId = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+        
+        public static TemplateVersionFile FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<TemplateVersionFile>(data);
         }
     
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
@@ -5793,7 +6560,8 @@ namespace Docxmerge
             }
         }
     
-        [Newtonsoft.Json.JsonProperty("tenantId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("tenantId", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public string TenantId
         {
             get { return _tenantId; }
@@ -5919,6 +6687,504 @@ namespace Docxmerge
         public static InvitationMetadata FromJson(string data)
         {
             return Newtonsoft.Json.JsonConvert.DeserializeObject<InvitationMetadata>(data);
+        }
+    
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected virtual void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            var handler = PropertyChanged;
+            if (handler != null) 
+                handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.11.0.0 (Newtonsoft.Json v9.0.0.0)")]
+    public partial class Group : System.ComponentModel.INotifyPropertyChanged
+    {
+        private string _name;
+        private System.Collections.ObjectModel.ObservableCollection<TemplateGroup> _templateGroups;
+        private string _id;
+        private System.DateTime? _created;
+        private System.DateTime? _modified;
+        private Tenant _tenant;
+        private string _tenantId;
+    
+        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Name
+        {
+            get { return _name; }
+            set 
+            {
+                if (_name != value)
+                {
+                    _name = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("templateGroups", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.ObjectModel.ObservableCollection<TemplateGroup> TemplateGroups
+        {
+            get { return _templateGroups; }
+            set 
+            {
+                if (_templateGroups != value)
+                {
+                    _templateGroups = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Id
+        {
+            get { return _id; }
+            set 
+            {
+                if (_id != value)
+                {
+                    _id = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("created", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime? Created
+        {
+            get { return _created; }
+            set 
+            {
+                if (_created != value)
+                {
+                    _created = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("modified", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime? Modified
+        {
+            get { return _modified; }
+            set 
+            {
+                if (_modified != value)
+                {
+                    _modified = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("tenant", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Tenant Tenant
+        {
+            get { return _tenant; }
+            set 
+            {
+                if (_tenant != value)
+                {
+                    _tenant = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("tenantId", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string TenantId
+        {
+            get { return _tenantId; }
+            set 
+            {
+                if (_tenantId != value)
+                {
+                    _tenantId = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+        
+        public static Group FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<Group>(data);
+        }
+    
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected virtual void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            var handler = PropertyChanged;
+            if (handler != null) 
+                handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.11.0.0 (Newtonsoft.Json v9.0.0.0)")]
+    public partial class AppFile : System.ComponentModel.INotifyPropertyChanged
+    {
+        private string _originalName;
+        private string _objectName;
+        private string _bucket;
+        private System.Collections.Generic.Dictionary<string, object> _metadata;
+        private int? _size;
+        private string _id;
+        private System.DateTime? _created;
+        private System.DateTime? _modified;
+        private Tenant _tenant;
+        private string _tenantId;
+    
+        [Newtonsoft.Json.JsonProperty("originalName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string OriginalName
+        {
+            get { return _originalName; }
+            set 
+            {
+                if (_originalName != value)
+                {
+                    _originalName = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("objectName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ObjectName
+        {
+            get { return _objectName; }
+            set 
+            {
+                if (_objectName != value)
+                {
+                    _objectName = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("bucket", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Bucket
+        {
+            get { return _bucket; }
+            set 
+            {
+                if (_bucket != value)
+                {
+                    _bucket = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("metadata", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.Dictionary<string, object> Metadata
+        {
+            get { return _metadata; }
+            set 
+            {
+                if (_metadata != value)
+                {
+                    _metadata = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("size", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? Size
+        {
+            get { return _size; }
+            set 
+            {
+                if (_size != value)
+                {
+                    _size = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Id
+        {
+            get { return _id; }
+            set 
+            {
+                if (_id != value)
+                {
+                    _id = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("created", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime? Created
+        {
+            get { return _created; }
+            set 
+            {
+                if (_created != value)
+                {
+                    _created = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("modified", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime? Modified
+        {
+            get { return _modified; }
+            set 
+            {
+                if (_modified != value)
+                {
+                    _modified = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("tenant", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Tenant Tenant
+        {
+            get { return _tenant; }
+            set 
+            {
+                if (_tenant != value)
+                {
+                    _tenant = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("tenantId", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string TenantId
+        {
+            get { return _tenantId; }
+            set 
+            {
+                if (_tenantId != value)
+                {
+                    _tenantId = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+        
+        public static AppFile FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<AppFile>(data);
+        }
+    
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected virtual void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            var handler = PropertyChanged;
+            if (handler != null) 
+                handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.11.0.0 (Newtonsoft.Json v9.0.0.0)")]
+    public partial class Report : System.ComponentModel.INotifyPropertyChanged
+    {
+        private System.Collections.Generic.Dictionary<string, object> _data;
+        private AppFile _templateFile;
+        private string _templateFileId;
+        private AppFile _resultFile;
+        private string _resultFileId;
+        private TemplateVersionFile _templateVersionFile;
+        private string _id;
+        private System.DateTime? _created;
+        private System.DateTime? _modified;
+        private Tenant _tenant;
+        private string _tenantId;
+    
+        [Newtonsoft.Json.JsonProperty("data", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.Dictionary<string, object> Data
+        {
+            get { return _data; }
+            set 
+            {
+                if (_data != value)
+                {
+                    _data = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("templateFile", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public AppFile TemplateFile
+        {
+            get { return _templateFile; }
+            set 
+            {
+                if (_templateFile != value)
+                {
+                    _templateFile = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("templateFileId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string TemplateFileId
+        {
+            get { return _templateFileId; }
+            set 
+            {
+                if (_templateFileId != value)
+                {
+                    _templateFileId = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("resultFile", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public AppFile ResultFile
+        {
+            get { return _resultFile; }
+            set 
+            {
+                if (_resultFile != value)
+                {
+                    _resultFile = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("resultFileId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ResultFileId
+        {
+            get { return _resultFileId; }
+            set 
+            {
+                if (_resultFileId != value)
+                {
+                    _resultFileId = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("templateVersionFile", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public TemplateVersionFile TemplateVersionFile
+        {
+            get { return _templateVersionFile; }
+            set 
+            {
+                if (_templateVersionFile != value)
+                {
+                    _templateVersionFile = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Id
+        {
+            get { return _id; }
+            set 
+            {
+                if (_id != value)
+                {
+                    _id = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("created", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime? Created
+        {
+            get { return _created; }
+            set 
+            {
+                if (_created != value)
+                {
+                    _created = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("modified", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime? Modified
+        {
+            get { return _modified; }
+            set 
+            {
+                if (_modified != value)
+                {
+                    _modified = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("tenant", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Tenant Tenant
+        {
+            get { return _tenant; }
+            set 
+            {
+                if (_tenant != value)
+                {
+                    _tenant = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        [Newtonsoft.Json.JsonProperty("tenantId", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string TenantId
+        {
+            get { return _tenantId; }
+            set 
+            {
+                if (_tenantId != value)
+                {
+                    _tenantId = value; 
+                    RaisePropertyChanged();
+                }
+            }
+        }
+    
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+        
+        public static Report FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<Report>(data);
         }
     
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
@@ -6153,1042 +7419,6 @@ namespace Docxmerge
         public static PaymentRequestModel FromJson(string data)
         {
             return Newtonsoft.Json.JsonConvert.DeserializeObject<PaymentRequestModel>(data);
-        }
-    
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected virtual void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
-        {
-            var handler = PropertyChanged;
-            if (handler != null) 
-                handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-        }
-    
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.11.0.0 (Newtonsoft.Json v9.0.0.0)")]
-    public partial class Template : System.ComponentModel.INotifyPropertyChanged
-    {
-        private string _name;
-        private System.Collections.ObjectModel.ObservableCollection<TemplateGroup> _templateGroups;
-        private System.Collections.ObjectModel.ObservableCollection<TemplateVersionFile> _templateVersionFiles;
-        private string _id;
-        private System.DateTime? _created;
-        private System.DateTime? _modified;
-        private Tenant _tenant;
-        private string _tenantId;
-    
-        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Name
-        {
-            get { return _name; }
-            set 
-            {
-                if (_name != value)
-                {
-                    _name = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("templateGroups", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.ObjectModel.ObservableCollection<TemplateGroup> TemplateGroups
-        {
-            get { return _templateGroups; }
-            set 
-            {
-                if (_templateGroups != value)
-                {
-                    _templateGroups = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("templateVersionFiles", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.ObjectModel.ObservableCollection<TemplateVersionFile> TemplateVersionFiles
-        {
-            get { return _templateVersionFiles; }
-            set 
-            {
-                if (_templateVersionFiles != value)
-                {
-                    _templateVersionFiles = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Id
-        {
-            get { return _id; }
-            set 
-            {
-                if (_id != value)
-                {
-                    _id = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("created", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime? Created
-        {
-            get { return _created; }
-            set 
-            {
-                if (_created != value)
-                {
-                    _created = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("modified", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime? Modified
-        {
-            get { return _modified; }
-            set 
-            {
-                if (_modified != value)
-                {
-                    _modified = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("tenant", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public Tenant Tenant
-        {
-            get { return _tenant; }
-            set 
-            {
-                if (_tenant != value)
-                {
-                    _tenant = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("tenantId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string TenantId
-        {
-            get { return _tenantId; }
-            set 
-            {
-                if (_tenantId != value)
-                {
-                    _tenantId = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        public string ToJson() 
-        {
-            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
-        }
-        
-        public static Template FromJson(string data)
-        {
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<Template>(data);
-        }
-    
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected virtual void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
-        {
-            var handler = PropertyChanged;
-            if (handler != null) 
-                handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-        }
-    
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.11.0.0 (Newtonsoft.Json v9.0.0.0)")]
-    public partial class TemplateGroup : System.ComponentModel.INotifyPropertyChanged
-    {
-        private Template _template;
-        private string _templateId;
-        private Group _group;
-        private string _groupId;
-        private string _id;
-        private System.DateTime? _created;
-        private System.DateTime? _modified;
-        private Tenant _tenant;
-        private string _tenantId;
-    
-        [Newtonsoft.Json.JsonProperty("template", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public Template Template
-        {
-            get { return _template; }
-            set 
-            {
-                if (_template != value)
-                {
-                    _template = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("templateId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string TemplateId
-        {
-            get { return _templateId; }
-            set 
-            {
-                if (_templateId != value)
-                {
-                    _templateId = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("group", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public Group Group
-        {
-            get { return _group; }
-            set 
-            {
-                if (_group != value)
-                {
-                    _group = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("groupId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string GroupId
-        {
-            get { return _groupId; }
-            set 
-            {
-                if (_groupId != value)
-                {
-                    _groupId = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Id
-        {
-            get { return _id; }
-            set 
-            {
-                if (_id != value)
-                {
-                    _id = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("created", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime? Created
-        {
-            get { return _created; }
-            set 
-            {
-                if (_created != value)
-                {
-                    _created = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("modified", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime? Modified
-        {
-            get { return _modified; }
-            set 
-            {
-                if (_modified != value)
-                {
-                    _modified = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("tenant", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public Tenant Tenant
-        {
-            get { return _tenant; }
-            set 
-            {
-                if (_tenant != value)
-                {
-                    _tenant = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("tenantId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string TenantId
-        {
-            get { return _tenantId; }
-            set 
-            {
-                if (_tenantId != value)
-                {
-                    _tenantId = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        public string ToJson() 
-        {
-            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
-        }
-        
-        public static TemplateGroup FromJson(string data)
-        {
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<TemplateGroup>(data);
-        }
-    
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected virtual void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
-        {
-            var handler = PropertyChanged;
-            if (handler != null) 
-                handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-        }
-    
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.11.0.0 (Newtonsoft.Json v9.0.0.0)")]
-    public partial class TemplateVersionFile : System.ComponentModel.INotifyPropertyChanged
-    {
-        private Template _template;
-        private string _templateId;
-        private string _appFileId;
-        private AppFile _appFile;
-        private TemplateVersionFileStatus? _status;
-        private int? _version;
-        private System.Collections.ObjectModel.ObservableCollection<string> _attributes;
-        private System.Collections.Generic.Dictionary<string, object> _example;
-        private System.Collections.ObjectModel.ObservableCollection<Report> _reports;
-        private string _id;
-        private System.DateTime? _created;
-        private System.DateTime? _modified;
-        private Tenant _tenant;
-        private string _tenantId;
-    
-        [Newtonsoft.Json.JsonProperty("template", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public Template Template
-        {
-            get { return _template; }
-            set 
-            {
-                if (_template != value)
-                {
-                    _template = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("templateId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string TemplateId
-        {
-            get { return _templateId; }
-            set 
-            {
-                if (_templateId != value)
-                {
-                    _templateId = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("appFileId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string AppFileId
-        {
-            get { return _appFileId; }
-            set 
-            {
-                if (_appFileId != value)
-                {
-                    _appFileId = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("appFile", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public AppFile AppFile
-        {
-            get { return _appFile; }
-            set 
-            {
-                if (_appFile != value)
-                {
-                    _appFile = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("status", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public TemplateVersionFileStatus? Status
-        {
-            get { return _status; }
-            set 
-            {
-                if (_status != value)
-                {
-                    _status = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("version", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public int? Version
-        {
-            get { return _version; }
-            set 
-            {
-                if (_version != value)
-                {
-                    _version = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("attributes", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.ObjectModel.ObservableCollection<string> Attributes
-        {
-            get { return _attributes; }
-            set 
-            {
-                if (_attributes != value)
-                {
-                    _attributes = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("example", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.Dictionary<string, object> Example
-        {
-            get { return _example; }
-            set 
-            {
-                if (_example != value)
-                {
-                    _example = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("reports", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.ObjectModel.ObservableCollection<Report> Reports
-        {
-            get { return _reports; }
-            set 
-            {
-                if (_reports != value)
-                {
-                    _reports = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Id
-        {
-            get { return _id; }
-            set 
-            {
-                if (_id != value)
-                {
-                    _id = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("created", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime? Created
-        {
-            get { return _created; }
-            set 
-            {
-                if (_created != value)
-                {
-                    _created = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("modified", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime? Modified
-        {
-            get { return _modified; }
-            set 
-            {
-                if (_modified != value)
-                {
-                    _modified = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("tenant", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public Tenant Tenant
-        {
-            get { return _tenant; }
-            set 
-            {
-                if (_tenant != value)
-                {
-                    _tenant = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("tenantId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string TenantId
-        {
-            get { return _tenantId; }
-            set 
-            {
-                if (_tenantId != value)
-                {
-                    _tenantId = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        public string ToJson() 
-        {
-            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
-        }
-        
-        public static TemplateVersionFile FromJson(string data)
-        {
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<TemplateVersionFile>(data);
-        }
-    
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected virtual void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
-        {
-            var handler = PropertyChanged;
-            if (handler != null) 
-                handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-        }
-    
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.11.0.0 (Newtonsoft.Json v9.0.0.0)")]
-    public partial class Group : System.ComponentModel.INotifyPropertyChanged
-    {
-        private string _name;
-        private System.Collections.ObjectModel.ObservableCollection<TemplateGroup> _templateGroups;
-        private string _id;
-        private System.DateTime? _created;
-        private System.DateTime? _modified;
-        private Tenant _tenant;
-        private string _tenantId;
-    
-        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Name
-        {
-            get { return _name; }
-            set 
-            {
-                if (_name != value)
-                {
-                    _name = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("templateGroups", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.ObjectModel.ObservableCollection<TemplateGroup> TemplateGroups
-        {
-            get { return _templateGroups; }
-            set 
-            {
-                if (_templateGroups != value)
-                {
-                    _templateGroups = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Id
-        {
-            get { return _id; }
-            set 
-            {
-                if (_id != value)
-                {
-                    _id = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("created", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime? Created
-        {
-            get { return _created; }
-            set 
-            {
-                if (_created != value)
-                {
-                    _created = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("modified", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime? Modified
-        {
-            get { return _modified; }
-            set 
-            {
-                if (_modified != value)
-                {
-                    _modified = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("tenant", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public Tenant Tenant
-        {
-            get { return _tenant; }
-            set 
-            {
-                if (_tenant != value)
-                {
-                    _tenant = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("tenantId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string TenantId
-        {
-            get { return _tenantId; }
-            set 
-            {
-                if (_tenantId != value)
-                {
-                    _tenantId = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        public string ToJson() 
-        {
-            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
-        }
-        
-        public static Group FromJson(string data)
-        {
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<Group>(data);
-        }
-    
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected virtual void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
-        {
-            var handler = PropertyChanged;
-            if (handler != null) 
-                handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-        }
-    
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.11.0.0 (Newtonsoft.Json v9.0.0.0)")]
-    public partial class AppFile : System.ComponentModel.INotifyPropertyChanged
-    {
-        private string _originalName;
-        private string _objectName;
-        private string _bucket;
-        private System.Collections.Generic.Dictionary<string, object> _metadata;
-        private int? _size;
-        private string _id;
-        private System.DateTime? _created;
-        private System.DateTime? _modified;
-        private Tenant _tenant;
-        private string _tenantId;
-    
-        [Newtonsoft.Json.JsonProperty("originalName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string OriginalName
-        {
-            get { return _originalName; }
-            set 
-            {
-                if (_originalName != value)
-                {
-                    _originalName = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("objectName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string ObjectName
-        {
-            get { return _objectName; }
-            set 
-            {
-                if (_objectName != value)
-                {
-                    _objectName = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("bucket", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Bucket
-        {
-            get { return _bucket; }
-            set 
-            {
-                if (_bucket != value)
-                {
-                    _bucket = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("metadata", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.Dictionary<string, object> Metadata
-        {
-            get { return _metadata; }
-            set 
-            {
-                if (_metadata != value)
-                {
-                    _metadata = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("size", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public int? Size
-        {
-            get { return _size; }
-            set 
-            {
-                if (_size != value)
-                {
-                    _size = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Id
-        {
-            get { return _id; }
-            set 
-            {
-                if (_id != value)
-                {
-                    _id = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("created", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime? Created
-        {
-            get { return _created; }
-            set 
-            {
-                if (_created != value)
-                {
-                    _created = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("modified", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime? Modified
-        {
-            get { return _modified; }
-            set 
-            {
-                if (_modified != value)
-                {
-                    _modified = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("tenant", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public Tenant Tenant
-        {
-            get { return _tenant; }
-            set 
-            {
-                if (_tenant != value)
-                {
-                    _tenant = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("tenantId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string TenantId
-        {
-            get { return _tenantId; }
-            set 
-            {
-                if (_tenantId != value)
-                {
-                    _tenantId = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        public string ToJson() 
-        {
-            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
-        }
-        
-        public static AppFile FromJson(string data)
-        {
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<AppFile>(data);
-        }
-    
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected virtual void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
-        {
-            var handler = PropertyChanged;
-            if (handler != null) 
-                handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-        }
-    
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.11.0.0 (Newtonsoft.Json v9.0.0.0)")]
-    public partial class Report : System.ComponentModel.INotifyPropertyChanged
-    {
-        private System.Collections.Generic.Dictionary<string, object> _data;
-        private AppFile _templateFile;
-        private string _templateFileId;
-        private AppFile _resultFile;
-        private string _resultFileId;
-        private TemplateVersionFile _templateVersionFile;
-        private string _id;
-        private System.DateTime? _created;
-        private System.DateTime? _modified;
-        private Tenant _tenant;
-        private string _tenantId;
-    
-        [Newtonsoft.Json.JsonProperty("data", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.Dictionary<string, object> Data
-        {
-            get { return _data; }
-            set 
-            {
-                if (_data != value)
-                {
-                    _data = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("templateFile", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public AppFile TemplateFile
-        {
-            get { return _templateFile; }
-            set 
-            {
-                if (_templateFile != value)
-                {
-                    _templateFile = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("templateFileId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string TemplateFileId
-        {
-            get { return _templateFileId; }
-            set 
-            {
-                if (_templateFileId != value)
-                {
-                    _templateFileId = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("resultFile", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public AppFile ResultFile
-        {
-            get { return _resultFile; }
-            set 
-            {
-                if (_resultFile != value)
-                {
-                    _resultFile = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("resultFileId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string ResultFileId
-        {
-            get { return _resultFileId; }
-            set 
-            {
-                if (_resultFileId != value)
-                {
-                    _resultFileId = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("templateVersionFile", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public TemplateVersionFile TemplateVersionFile
-        {
-            get { return _templateVersionFile; }
-            set 
-            {
-                if (_templateVersionFile != value)
-                {
-                    _templateVersionFile = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Id
-        {
-            get { return _id; }
-            set 
-            {
-                if (_id != value)
-                {
-                    _id = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("created", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime? Created
-        {
-            get { return _created; }
-            set 
-            {
-                if (_created != value)
-                {
-                    _created = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("modified", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime? Modified
-        {
-            get { return _modified; }
-            set 
-            {
-                if (_modified != value)
-                {
-                    _modified = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("tenant", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public Tenant Tenant
-        {
-            get { return _tenant; }
-            set 
-            {
-                if (_tenant != value)
-                {
-                    _tenant = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        [Newtonsoft.Json.JsonProperty("tenantId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string TenantId
-        {
-            get { return _tenantId; }
-            set 
-            {
-                if (_tenantId != value)
-                {
-                    _tenantId = value; 
-                    RaisePropertyChanged();
-                }
-            }
-        }
-    
-        public string ToJson() 
-        {
-            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
-        }
-        
-        public static Report FromJson(string data)
-        {
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<Report>(data);
         }
     
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
@@ -7640,6 +7870,20 @@ namespace Docxmerge
     
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.11.0.0 (Newtonsoft.Json v9.0.0.0)")]
     public enum Env
+    {
+        [System.Runtime.Serialization.EnumMember(Value = "DRAFT")]
+        DRAFT = 0,
+    
+        [System.Runtime.Serialization.EnumMember(Value = "TESTING")]
+        TESTING = 1,
+    
+        [System.Runtime.Serialization.EnumMember(Value = "PRODUCTION")]
+        PRODUCTION = 2,
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.11.0.0 (Newtonsoft.Json v9.0.0.0)")]
+    public enum Env2
     {
         [System.Runtime.Serialization.EnumMember(Value = "DRAFT")]
         DRAFT = 0,

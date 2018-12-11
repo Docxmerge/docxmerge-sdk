@@ -4,3 +4,4 @@ build
 out.pdf
 nexus.properties
 secret2.gpg
+tmp

@@ -36,6 +36,7 @@ class Tenant(object):
         'modified': 'datetime',
         'name': 'str',
         'api_key': 'str',
+        'templates': 'list[Template]',
         'users': 'list[TenantUser]',
         'invitations': 'list[Invitation]'
     }
@@ -46,11 +47,12 @@ class Tenant(object):
         'modified': 'modified',
         'name': 'name',
         'api_key': 'apiKey',
+        'templates': 'templates',
         'users': 'users',
         'invitations': 'invitations'
     }
 
-    def __init__(self, id=None, created=None, modified=None, name=None, api_key=None, users=None, invitations=None):  # noqa: E501
+    def __init__(self, id=None, created=None, modified=None, name=None, api_key=None, templates=None, users=None, invitations=None):  # noqa: E501
         """Tenant - a model defined in OpenAPI"""  # noqa: E501
 
         self._id = None
@@ -58,6 +60,7 @@ class Tenant(object):
         self._modified = None
         self._name = None
         self._api_key = None
+        self._templates = None
         self._users = None
         self._invitations = None
         self.discriminator = None
@@ -72,6 +75,8 @@ class Tenant(object):
             self.name = name
         if api_key is not None:
             self.api_key = api_key
+        if templates is not None:
+            self.templates = templates
         if users is not None:
             self.users = users
         if invitations is not None:
@@ -181,6 +186,27 @@ class Tenant(object):
         """
 
         self._api_key = api_key
+
+    @property
+    def templates(self):
+        """Gets the templates of this Tenant.  # noqa: E501
+
+
+        :return: The templates of this Tenant.  # noqa: E501
+        :rtype: list[Template]
+        """
+        return self._templates
+
+    @templates.setter
+    def templates(self, templates):
+        """Sets the templates of this Tenant.
+
+
+        :param templates: The templates of this Tenant.  # noqa: E501
+        :type: list[Template]
+        """
+
+        self._templates = templates
 
     @property
     def users(self):

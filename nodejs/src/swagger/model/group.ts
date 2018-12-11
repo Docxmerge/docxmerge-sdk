@@ -20,7 +20,7 @@ export class Group {
     'created'?: Date;
     'modified'?: Date;
     'tenant'?: Tenant;
-    'tenantId'?: string;
+    'tenantId': string;
 
     static discriminator: string | undefined = undefined;
 

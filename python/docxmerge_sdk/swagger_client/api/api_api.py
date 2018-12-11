@@ -130,6 +130,108 @@ class ApiApi(object):
             _request_timeout=local_var_params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def api_hydrate_post(self, document, **kwargs):  # noqa: E501
+        """api_hydrate_post  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.api_hydrate_post(document, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param file document: (required)
+        :param bool fill_borders:
+        :return: file
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.api_hydrate_post_with_http_info(document, **kwargs)  # noqa: E501
+        else:
+            (data) = self.api_hydrate_post_with_http_info(document, **kwargs)  # noqa: E501
+            return data
+
+    def api_hydrate_post_with_http_info(self, document, **kwargs):  # noqa: E501
+        """api_hydrate_post  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.api_hydrate_post_with_http_info(document, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param file document: (required)
+        :param bool fill_borders:
+        :return: file
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        local_var_params = locals()
+
+        all_params = ['document', 'fill_borders']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        for key, val in six.iteritems(local_var_params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method api_hydrate_post" % key
+                )
+            local_var_params[key] = val
+        del local_var_params['kwargs']
+        # verify the required parameter 'document' is set
+        if ('document' not in local_var_params or
+                local_var_params['document'] is None):
+            raise ValueError("Missing the required parameter `document` when calling `api_hydrate_post`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+
+        query_params = []
+        if 'fill_borders' in local_var_params:
+            query_params.append(('fillBorders', local_var_params['fill_borders']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+        if 'document' in local_var_params:
+            local_var_files['document'] = local_var_params['document']  # noqa: E501
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/octet-stream'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['multipart/form-data'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = ['Bearer']  # noqa: E501
+
+        return self.api_client.call_api(
+            '/api/hydrate', 'POST',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='file',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=local_var_params.get('async_req'),
+            _return_http_data_only=local_var_params.get('_return_http_data_only'),  # noqa: E501
+            _preload_content=local_var_params.get('_preload_content', True),
+            _request_timeout=local_var_params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def api_print_post(self, document, data, **kwargs):  # noqa: E501
         """api_print_post  # noqa: E501
 

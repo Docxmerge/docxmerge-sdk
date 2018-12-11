@@ -1921,6 +1921,124 @@ class TemplatesApi(object):
             _request_timeout=local_var_params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def api_by_tenant_templates_by_template_name_convert_post(self, template_name, tenant, **kwargs):  # noqa: E501
+        """api_by_tenant_templates_by_template_name_convert_post  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.api_by_tenant_templates_by_template_name_convert_post(template_name, tenant, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str template_name: (required)
+        :param str tenant: (required)
+        :param int version:
+        :param bool debug:
+        :param object query_attributes:
+        :param str env:
+        :return: file
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.api_by_tenant_templates_by_template_name_convert_post_with_http_info(template_name, tenant, **kwargs)  # noqa: E501
+        else:
+            (data) = self.api_by_tenant_templates_by_template_name_convert_post_with_http_info(template_name, tenant, **kwargs)  # noqa: E501
+            return data
+
+    def api_by_tenant_templates_by_template_name_convert_post_with_http_info(self, template_name, tenant, **kwargs):  # noqa: E501
+        """api_by_tenant_templates_by_template_name_convert_post  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.api_by_tenant_templates_by_template_name_convert_post_with_http_info(template_name, tenant, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str template_name: (required)
+        :param str tenant: (required)
+        :param int version:
+        :param bool debug:
+        :param object query_attributes:
+        :param str env:
+        :return: file
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        local_var_params = locals()
+
+        all_params = ['template_name', 'tenant', 'version', 'debug', 'query_attributes', 'env']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        for key, val in six.iteritems(local_var_params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method api_by_tenant_templates_by_template_name_convert_post" % key
+                )
+            local_var_params[key] = val
+        del local_var_params['kwargs']
+        # verify the required parameter 'template_name' is set
+        if ('template_name' not in local_var_params or
+                local_var_params['template_name'] is None):
+            raise ValueError("Missing the required parameter `template_name` when calling `api_by_tenant_templates_by_template_name_convert_post`")  # noqa: E501
+        # verify the required parameter 'tenant' is set
+        if ('tenant' not in local_var_params or
+                local_var_params['tenant'] is None):
+            raise ValueError("Missing the required parameter `tenant` when calling `api_by_tenant_templates_by_template_name_convert_post`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'template_name' in local_var_params:
+            path_params['templateName'] = local_var_params['template_name']  # noqa: E501
+        if 'tenant' in local_var_params:
+            path_params['tenant'] = local_var_params['tenant']  # noqa: E501
+
+        query_params = []
+        if 'version' in local_var_params:
+            query_params.append(('version', local_var_params['version']))  # noqa: E501
+        if 'debug' in local_var_params:
+            query_params.append(('debug', local_var_params['debug']))  # noqa: E501
+        if 'query_attributes' in local_var_params:
+            query_params.append(('queryAttributes', local_var_params['query_attributes']))  # noqa: E501
+        if 'env' in local_var_params:
+            query_params.append(('env', local_var_params['env']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/octet-stream'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = ['Bearer']  # noqa: E501
+
+        return self.api_client.call_api(
+            '/api/{tenant}/templates/{templateName}/convert', 'POST',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='file',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=local_var_params.get('async_req'),
+            _return_http_data_only=local_var_params.get('_return_http_data_only'),  # noqa: E501
+            _preload_content=local_var_params.get('_preload_content', True),
+            _request_timeout=local_var_params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def api_by_tenant_templates_by_template_name_render_post(self, template_name, tenant, request_body, **kwargs):  # noqa: E501
         """api_by_tenant_templates_by_template_name_render_post  # noqa: E501
 

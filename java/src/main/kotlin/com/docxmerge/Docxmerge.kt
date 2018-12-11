@@ -10,7 +10,7 @@ import io.swagger.client.model.TemplateListResponseModel
 import java.io.File
 
 
-open class Docxmerge(apiKey: String, private var tenant: String) {
+open class Docxmerge(apiKey: String, private var tenant: String, url: String = "https://api.docxmerge.com") {
     private var templatesApi: TemplatesApi
     private var apiApi: ApiApi
     private var apiClient: ApiClient = ApiClient()
@@ -21,7 +21,7 @@ open class Docxmerge(apiKey: String, private var tenant: String) {
         auth.apiKey = apiKey
         apiClient.addDefaultHeader("ApiKey", apiKey)
         apiClient.setApiKey(apiKey)
-        apiClient.basePath = "https://api.docxmerge.com"
+        apiClient.basePath = url
         templatesApi = TemplatesApi(apiClient)
         apiApi = ApiApi(apiClient)
     }
@@ -39,14 +39,33 @@ open class Docxmerge(apiKey: String, private var tenant: String) {
         return apiApi.apiPrintPost(document, dataFile)
     }
 
+    fun convertFile(document: File): File? {
+        return templatesApi.apiByTenantConvertPost(tenant, document)
+    }
+
+    fun convertTemplate(
+        templateName: String, version: Int,
+        env: String,
+        attributes: Any
+    ): File? {
+        return templatesApi.apiByTenantTemplatesByTemplateNameConvertPost(
+            templateName,
+            tenant,
+            version,
+            false,
+            attributes,
+            env
+        )
+    }
+
     fun renderTemplate(
         templateName: String,
         data: Map<String, Any>,
         version: Int,
         env: String,
         attributes: Any
-    ): Report? {
-        return templatesApi.apiByTenantTemplatesByTemplateNameRenderPost(
+    ): File? {
+        val report = templatesApi.apiByTenantTemplatesByTemplateNameRenderPost(
             data,
             templateName,
             tenant,
@@ -55,6 +74,8 @@ open class Docxmerge(apiKey: String, private var tenant: String) {
             attributes,
             env
         )
+
+        return templatesApi.apiByTenantReportsByIdGet(report.id,tenant)
     }
 
     fun mergeDocx(document: File, data: Map<String, Any>): File? {

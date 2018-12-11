@@ -22,7 +22,7 @@ export class TenantUser {
     'created'?: Date;
     'modified'?: Date;
     'tenant'?: Tenant;
-    'tenantId'?: string;
+    'tenantId': string;
 
     static discriminator: string | undefined = undefined;
 

@@ -45,14 +45,15 @@ namespace Docxmerge
 
         public async Task<System.IO.Stream> RenderFile<T>(string tenant, System.IO.Stream document, T data)
         {
-            var renderFile = await _apiClient.ApiByTenantPrintPostAsync(tenant, new FileParameter(document),new FileParameter(ObjectToStream(data)));
+            var renderFile = await _apiClient.ApiByTenantPrintPostAsync(tenant, new FileParameter(document),
+                new FileParameter(ObjectToStream(data)));
             return renderFile.Stream;
         }
 
         public async Task<System.IO.Stream> RenderTemplate<T>(string tenantId, string templateName,
             T data,
             int version,
-            Dictionary<string, string> attributes = null, Env? env = null)
+            Dictionary<string, string> attributes = null, Env2? env = null)
         {
             var dict = ObjectToDictionary(data);
             var report = await _apiClient.ApiByTenantTemplatesByTemplateNameRenderPostAsync(templateName, tenantId,
@@ -66,6 +67,21 @@ namespace Docxmerge
         {
             var fileResponse = await _apiClient.ApiByTenantMergePostAsync(tenant, new FileParameter(document),
                 new FileParameter(ObjectToStream(data)));
+            return fileResponse.Stream;
+        }
+
+        public async Task<System.IO.Stream> ConvertFile(string tenant, System.IO.Stream document)
+        {
+            var fileResponse = await _apiClient.ApiByTenantConvertPostAsync(new FileParameter(document), tenant);
+            return fileResponse.Stream;
+        }
+
+        public async Task<System.IO.Stream> ConvertTemplate(string tenant, string templateName, int version,
+            Dictionary<string, string> attributes = null, Env? env = null)
+        {
+            var fileResponse =
+                await _apiClient.ApiByTenantTemplatesByTemplateNameConvertPostAsync(templateName,tenant, version,
+                    false, attributes, env);
             return fileResponse.Stream;
         }
 

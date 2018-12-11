@@ -79,8 +79,7 @@ class Template(object):
             self.modified = modified
         if tenant is not None:
             self.tenant = tenant
-        if tenant_id is not None:
-            self.tenant_id = tenant_id
+        self.tenant_id = tenant_id
 
     @property
     def name(self):
@@ -247,6 +246,8 @@ class Template(object):
         :param tenant_id: The tenant_id of this Template.  # noqa: E501
         :type: str
         """
+        if tenant_id is None:
+            raise ValueError("Invalid value for `tenant_id`, must not be `None`")  # noqa: E501
 
         self._tenant_id = tenant_id
 

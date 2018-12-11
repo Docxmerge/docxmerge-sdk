@@ -17,7 +17,6 @@ import http = require('http');
 import { CodeSamplesResponse } from '../model/codeSamplesResponse';
 import { Report } from '../model/report';
 import { ReportListResponseModel } from '../model/reportListResponseModel';
-import { Stream } from '../model/stream';
 import { Template } from '../model/template';
 import { TemplateListResponseModel } from '../model/templateListResponseModel';
 import { TemplateRequestModel } from '../model/templateRequestModel';
@@ -80,11 +79,11 @@ export class TemplatesApi {
 
     /**
      * 
-     * @summary Converts and generates a file with json.
+     * @summary Converts Word to PDF
      * @param tenant 
      * @param document Template file
      */
-    public apiByTenantConvertPost (tenant: string, document: Buffer) : Promise<{ response: http.IncomingMessage; body: Stream;  }> {
+    public apiByTenantConvertPost (tenant: string, document: Buffer) : Promise<{ response: http.IncomingMessage; body: Buffer;  }> {
         const localVarPath = this.basePath + '/api/{tenant}/convert'
             .replace('{' + 'tenant' + '}', encodeURIComponent(String(tenant)));
         let localVarQueryParameters: any = {};
@@ -115,7 +114,7 @@ export class TemplatesApi {
             headers: localVarHeaderParams,
             uri: localVarPath,
             useQuerystring: this._useQuerystring,
-            json: true,
+            encoding: null,
         };
 
         this.authentications.Bearer.applyToRequest(localVarRequestOptions);
@@ -129,12 +128,12 @@ export class TemplatesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.IncomingMessage; body: Stream;  }>((resolve, reject) => {
+        return new Promise<{ response: http.IncomingMessage; body: Buffer;  }>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
-                    body = ObjectSerializer.deserialize(body, "Stream");
+                    body = ObjectSerializer.deserialize(body, "Buffer");
                     if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         resolve({ response: response, body: body });
                     } else {
@@ -292,9 +291,8 @@ export class TemplatesApi {
      * @param tenant 
      * @param document Template file
      * @param data Json data
-     * @param tenantId 
      */
-    public apiByTenantPrintPost (tenant: string, document: Buffer, data: Buffer, tenantId?: string) : Promise<{ response: http.IncomingMessage; body: Stream;  }> {
+    public apiByTenantPrintPost (tenant: string, document: Buffer, data: Buffer) : Promise<{ response: http.IncomingMessage; body: Buffer;  }> {
         const localVarPath = this.basePath + '/api/{tenant}/print'
             .replace('{' + 'tenant' + '}', encodeURIComponent(String(tenant)));
         let localVarQueryParameters: any = {};
@@ -316,10 +314,6 @@ export class TemplatesApi {
             throw new Error('Required parameter data was null or undefined when calling apiByTenantPrintPost.');
         }
 
-        if (tenantId !== undefined) {
-            localVarQueryParameters['tenantId'] = ObjectSerializer.serialize(tenantId, "string");
-        }
-
 
         let localVarUseFormData = false;
 
@@ -339,7 +333,7 @@ export class TemplatesApi {
             headers: localVarHeaderParams,
             uri: localVarPath,
             useQuerystring: this._useQuerystring,
-            json: true,
+            encoding: null,
         };
 
         this.authentications.Bearer.applyToRequest(localVarRequestOptions);
@@ -353,12 +347,12 @@ export class TemplatesApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.IncomingMessage; body: Stream;  }>((resolve, reject) => {
+        return new Promise<{ response: http.IncomingMessage; body: Buffer;  }>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
-                    body = ObjectSerializer.deserialize(body, "Stream");
+                    body = ObjectSerializer.deserialize(body, "Buffer");
                     if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         resolve({ response: response, body: body });
                     } else {
@@ -1291,6 +1285,176 @@ export class TemplatesApi {
                     reject(error);
                 } else {
                     body = ObjectSerializer.deserialize(body, "Template");
+                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
+                        resolve({ response: response, body: body });
+                    } else {
+                        reject({ response: response, body: body });
+                    }
+                }
+            });
+        });
+    }
+    /**
+     * 
+     * @param templateName 
+     * @param tenant 
+     * @param version 
+     * @param debug 
+     * @param queryAttributes 
+     * @param env 
+     */
+    public apiByTenantTemplatesByTemplateNameConvertPost (templateName: string, tenant: string, version?: number, debug?: boolean, queryAttributes?: any, env?: 'DRAFT' | 'TESTING' | 'PRODUCTION') : Promise<{ response: http.IncomingMessage; body: Buffer;  }> {
+        const localVarPath = this.basePath + '/api/{tenant}/templates/{templateName}/convert'
+            .replace('{' + 'templateName' + '}', encodeURIComponent(String(templateName)))
+            .replace('{' + 'tenant' + '}', encodeURIComponent(String(tenant)));
+        let localVarQueryParameters: any = {};
+        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let localVarFormParams: any = {};
+
+        // verify required parameter 'templateName' is not null or undefined
+        if (templateName === null || templateName === undefined) {
+            throw new Error('Required parameter templateName was null or undefined when calling apiByTenantTemplatesByTemplateNameConvertPost.');
+        }
+
+        // verify required parameter 'tenant' is not null or undefined
+        if (tenant === null || tenant === undefined) {
+            throw new Error('Required parameter tenant was null or undefined when calling apiByTenantTemplatesByTemplateNameConvertPost.');
+        }
+
+        if (version !== undefined) {
+            localVarQueryParameters['version'] = ObjectSerializer.serialize(version, "number");
+        }
+
+        if (debug !== undefined) {
+            localVarQueryParameters['debug'] = ObjectSerializer.serialize(debug, "boolean");
+        }
+
+        if (queryAttributes !== undefined) {
+            localVarQueryParameters['queryAttributes'] = ObjectSerializer.serialize(queryAttributes, "any");
+        }
+
+        if (env !== undefined) {
+            localVarQueryParameters['env'] = ObjectSerializer.serialize(env, "'DRAFT' | 'TESTING' | 'PRODUCTION'");
+        }
+
+
+        let localVarUseFormData = false;
+
+        let localVarRequestOptions: localVarRequest.Options = {
+            method: 'POST',
+            qs: localVarQueryParameters,
+            headers: localVarHeaderParams,
+            uri: localVarPath,
+            useQuerystring: this._useQuerystring,
+            encoding: null,
+        };
+
+        this.authentications.Bearer.applyToRequest(localVarRequestOptions);
+
+        this.authentications.default.applyToRequest(localVarRequestOptions);
+
+        if (Object.keys(localVarFormParams).length) {
+            if (localVarUseFormData) {
+                (<any>localVarRequestOptions).formData = localVarFormParams;
+            } else {
+                localVarRequestOptions.form = localVarFormParams;
+            }
+        }
+        return new Promise<{ response: http.IncomingMessage; body: Buffer;  }>((resolve, reject) => {
+            localVarRequest(localVarRequestOptions, (error, response, body) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    body = ObjectSerializer.deserialize(body, "Buffer");
+                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
+                        resolve({ response: response, body: body });
+                    } else {
+                        reject({ response: response, body: body });
+                    }
+                }
+            });
+        });
+    }
+    /**
+     * 
+     * @summary Merge the template with json
+     * @param templateName Template name
+     * @param tenant Tenant id
+     * @param requestBody Data
+     * @param version Version of the template
+     * @param debug 
+     * @param queryAttributes Tags of the template
+     * @param env Environment of the template
+     */
+    public apiByTenantTemplatesByTemplateNameMergePost (templateName: string, tenant: string, requestBody: { [key: string]: any; }, version?: number, debug?: boolean, queryAttributes?: any, env?: 'DRAFT' | 'TESTING' | 'PRODUCTION') : Promise<{ response: http.IncomingMessage; body: Buffer;  }> {
+        const localVarPath = this.basePath + '/api/{tenant}/templates/{templateName}/merge'
+            .replace('{' + 'templateName' + '}', encodeURIComponent(String(templateName)))
+            .replace('{' + 'tenant' + '}', encodeURIComponent(String(tenant)));
+        let localVarQueryParameters: any = {};
+        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let localVarFormParams: any = {};
+
+        // verify required parameter 'templateName' is not null or undefined
+        if (templateName === null || templateName === undefined) {
+            throw new Error('Required parameter templateName was null or undefined when calling apiByTenantTemplatesByTemplateNameMergePost.');
+        }
+
+        // verify required parameter 'tenant' is not null or undefined
+        if (tenant === null || tenant === undefined) {
+            throw new Error('Required parameter tenant was null or undefined when calling apiByTenantTemplatesByTemplateNameMergePost.');
+        }
+
+        // verify required parameter 'requestBody' is not null or undefined
+        if (requestBody === null || requestBody === undefined) {
+            throw new Error('Required parameter requestBody was null or undefined when calling apiByTenantTemplatesByTemplateNameMergePost.');
+        }
+
+        if (version !== undefined) {
+            localVarQueryParameters['version'] = ObjectSerializer.serialize(version, "number");
+        }
+
+        if (debug !== undefined) {
+            localVarQueryParameters['debug'] = ObjectSerializer.serialize(debug, "boolean");
+        }
+
+        if (queryAttributes !== undefined) {
+            localVarQueryParameters['queryAttributes'] = ObjectSerializer.serialize(queryAttributes, "any");
+        }
+
+        if (env !== undefined) {
+            localVarQueryParameters['env'] = ObjectSerializer.serialize(env, "'DRAFT' | 'TESTING' | 'PRODUCTION'");
+        }
+
+
+        let localVarUseFormData = false;
+
+        let localVarRequestOptions: localVarRequest.Options = {
+            method: 'POST',
+            qs: localVarQueryParameters,
+            headers: localVarHeaderParams,
+            uri: localVarPath,
+            useQuerystring: this._useQuerystring,
+            encoding: null,
+            body: ObjectSerializer.serialize(requestBody, "{ [key: string]: any; }")
+        };
+
+        this.authentications.Bearer.applyToRequest(localVarRequestOptions);
+
+        this.authentications.default.applyToRequest(localVarRequestOptions);
+
+        if (Object.keys(localVarFormParams).length) {
+            if (localVarUseFormData) {
+                (<any>localVarRequestOptions).formData = localVarFormParams;
+            } else {
+                localVarRequestOptions.form = localVarFormParams;
+            }
+        }
+        return new Promise<{ response: http.IncomingMessage; body: Buffer;  }>((resolve, reject) => {
+            localVarRequest(localVarRequestOptions, (error, response, body) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    body = ObjectSerializer.deserialize(body, "Buffer");
                     if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         resolve({ response: response, body: body });
                     } else {

@@ -137,6 +137,69 @@ export class ApiApi {
     /**
      * 
      * @param document 
+     * @param fillBorders 
+     */
+    public apiHydratePost (document: Buffer, fillBorders?: boolean) : Promise<{ response: http.IncomingMessage; body: Buffer;  }> {
+        const localVarPath = this.basePath + '/api/hydrate';
+        let localVarQueryParameters: any = {};
+        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let localVarFormParams: any = {};
+
+        // verify required parameter 'document' is not null or undefined
+        if (document === null || document === undefined) {
+            throw new Error('Required parameter document was null or undefined when calling apiHydratePost.');
+        }
+
+        if (fillBorders !== undefined) {
+            localVarQueryParameters['fillBorders'] = ObjectSerializer.serialize(fillBorders, "boolean");
+        }
+
+
+        let localVarUseFormData = false;
+
+        if (document !== undefined) {
+            localVarFormParams['document'] = document;
+        }
+        localVarUseFormData = true;
+
+        let localVarRequestOptions: localVarRequest.Options = {
+            method: 'POST',
+            qs: localVarQueryParameters,
+            headers: localVarHeaderParams,
+            uri: localVarPath,
+            useQuerystring: this._useQuerystring,
+            encoding: null,
+        };
+
+        this.authentications.Bearer.applyToRequest(localVarRequestOptions);
+
+        this.authentications.default.applyToRequest(localVarRequestOptions);
+
+        if (Object.keys(localVarFormParams).length) {
+            if (localVarUseFormData) {
+                (<any>localVarRequestOptions).formData = localVarFormParams;
+            } else {
+                localVarRequestOptions.form = localVarFormParams;
+            }
+        }
+        return new Promise<{ response: http.IncomingMessage; body: Buffer;  }>((resolve, reject) => {
+            localVarRequest(localVarRequestOptions, (error, response, body) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    body = ObjectSerializer.deserialize(body, "Buffer");
+                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
+                        resolve({ response: response, body: body });
+                    } else {
+                        reject({ response: response, body: body });
+                    }
+                }
+            });
+        });
+    }
+    /**
+     * 
+     * @param document 
      * @param data 
      */
     public apiPrintPost (document: Buffer, data: Buffer) : Promise<{ response: http.IncomingMessage; body: Buffer;  }> {
