@@ -1,108 +1,138 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
-using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace Docxmerge
 {
-    public partial class DocxmergeApi
-    {
-        private readonly string _apiKey;
-
-        public DocxmergeApi(string baseUrl, string apiKey)
-        {
-            _apiKey = apiKey;
-
-            // from Api.cs
-            BaseUrl = baseUrl;
-            _settings = new Lazy<JsonSerializerSettings>(() =>
-            {
-                var settings = new JsonSerializerSettings();
-                UpdateJsonSerializerSettings(settings);
-                return settings;
-            });
-        }
-
-        partial void PrepareRequest(HttpClient client, HttpRequestMessage request, string url)
-        {
-            request.Headers.Add("ApiKey", _apiKey);
-        }
-    }
-
     public class Docxmerge
     {
-        private readonly DocxmergeApi _apiClient;
+        private readonly HttpClient _httpClient;
 
-
-        public Docxmerge(string apikey, string basePath = "https://api.docxmerge.com")
+        public Docxmerge(string apikey, string baseUrl)
         {
-            _apiClient = new DocxmergeApi(basePath, apikey);
+            _httpClient = new HttpClient
+            {
+                BaseAddress = new Uri(baseUrl)
+            };
+            _httpClient.DefaultRequestHeaders.Add("api-key", apikey);
         }
 
-        public async Task<System.IO.Stream> RenderFile<T>(string tenant, System.IO.Stream document, T data)
+
+      
+
+        #region Transform
+
+        public async Task<Stream> Transform(Stream fileStream)
         {
-            var renderFile = await _apiClient.ApiByTenantPrintPostAsync(tenant, new FileParameter(document),
-                new FileParameter(ObjectToStream(data)));
-            return renderFile.Stream;
+            var form = new MultipartFormDataContent
+            {
+                {new StreamContent(fileStream), "file", "file.docx"}
+            };
+            var response = await _httpClient.PostAsync("/api/v1/Admin/TransformFile", form);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStreamAsync();
         }
 
-        public async Task<System.IO.Stream> RenderTemplate<T>(string tenantId, string templateName,
-            T data,
-            int version,
-            Dictionary<string, string> attributes = null, Env2? env = null)
+        public async Task<Stream> Transform(byte[] bytes)
         {
-            var dict = ObjectToDictionary(data);
-            var report = await _apiClient.ApiByTenantTemplatesByTemplateNameRenderPostAsync(templateName, tenantId,
-                version,
-                false, dict, attributes, env);
-            var reportResponse = await _apiClient.ApiByTenantReportsByIdGetAsync(report.Id, tenantId);
-            return reportResponse.Stream;
+            var form = new MultipartFormDataContent
+            {
+                {new ByteArrayContent(bytes), "file", "file.docx"}
+            };
+            var response = await _httpClient.PostAsync("/api/v1/Admin/TransformFile", form);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStreamAsync();
         }
 
-        public async Task<System.IO.Stream> MergeTemplate<T>(string tenant, System.IO.Stream document, T data)
+        public async Task<Stream> Transform(string template)
         {
-            var fileResponse = await _apiClient.ApiByTenantMergePostAsync(tenant, new FileParameter(document),
-                new FileParameter(ObjectToStream(data)));
-            return fileResponse.Stream;
+            var response = await _httpClient.GetAsync($"/api/v1/Admin/TransformTemplate?template={template}");
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStreamAsync();
         }
 
-        public async Task<System.IO.Stream> ConvertFile(string tenant, System.IO.Stream document)
+        #endregion
+
+        #region Merge
+
+        public async Task<Stream> Merge<T>(string template, T data) where T : class
         {
-            var fileResponse = await _apiClient.ApiByTenantConvertPostAsync(new FileParameter(document), tenant);
-            return fileResponse.Stream;
+            var response = await _httpClient.PostAsync($"/api/v1/Admin/MergeTemplate?template={template}",
+                GetJsonContent(data));
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStreamAsync();
         }
 
-        public async Task<System.IO.Stream> ConvertTemplate(string tenant, string templateName, int version,
-            Dictionary<string, string> attributes = null, Env? env = null)
+        public async Task<Stream> Merge<T>(Stream fileStream, T data) where T : class
         {
-            var fileResponse =
-                await _apiClient.ApiByTenantTemplatesByTemplateNameConvertPostAsync(templateName,tenant, version,
-                    false, attributes, env);
-            return fileResponse.Stream;
+            var response = await _httpClient.PostAsync($"/api/v1/Admin/MergeFile",
+                GetMultipart(fileStream, data));
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStreamAsync();
         }
 
-        public Task<TemplateListResponseModel> GetTemplates(string tenantId, int page, int size)
+        public async Task<Stream> Merge<T>(byte[] bytes, T data) where T : class
         {
-            return _apiClient.ApiByTenantTemplatesGetAsync(tenantId, page, size);
+            var response = await _httpClient.PostAsync($"/api/v1/Admin/MergeFile",
+                GetMultipart(bytes, data));
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStreamAsync();
         }
 
-        private MemoryStream ObjectToStream<T>(T model)
+        #endregion
+
+        #region MergeAndTransform
+
+        public async Task<Stream> MergeAndTransform<T>(string template, T data) where T : class
         {
-            var ms = new MemoryStream();
-            var json = JsonConvert.SerializeObject(model);
-            ms.Write(Encoding.UTF8.GetBytes(json));
-            ms.Seek(0, SeekOrigin.Begin);
-            return ms;
+            var response = await _httpClient.PostAsync(
+                $"/api/v1/Admin/MergeAndTransformTemplatePost?template={template}",
+                GetJsonContent(data));
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStreamAsync();
         }
 
-        private Dictionary<string, object> ObjectToDictionary<T>(T model)
+        public async Task<Stream> MergeAndTransform<T>(Stream fileStream, T data) where T : class
         {
-            var json = JsonConvert.SerializeObject(model);
-            return JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
+            var response = await _httpClient.PostAsync($"/api/v1/Admin/MergeAndTransform",
+                GetMultipart(fileStream, data));
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStreamAsync();
+        }
+
+        public async Task<Stream> MergeAndTransform<T>(byte[] bytes, T data) where T : class
+        {
+            var response = await _httpClient.PostAsync($"/api/v1/Admin/MergeAndTransform",
+                GetMultipart(bytes, data));
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStreamAsync();
+        }
+
+        #endregion
+
+
+        private MultipartFormDataContent GetMultipart<T>(Stream file, T data) where T : class
+        {
+            return new MultipartFormDataContent
+            {
+                {new StreamContent(file), "file", "file.docx"}, {GetJsonContent(data), "data"}
+            };
+        }
+
+        private MultipartFormDataContent GetMultipart<T>(byte[] file, T data) where T : class
+        {
+            return new MultipartFormDataContent
+            {
+                {new ByteArrayContent(file), "file", "file.docx"}, {GetJsonContent(data), "data"}
+            };
+        }
+        private StringContent GetJsonContent<T>(T data) where T : class
+        {
+            return new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8,
+                "application/json");
         }
     }
 }

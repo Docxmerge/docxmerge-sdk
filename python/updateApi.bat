@@ -1,0 +1,1 @@
+java -jar ..\openapi-generator-cli generate  -i http://localhost:5101/swagger/v1/swagger.json --skip-validate-spec -l python -o docxmerge_sdk/swagger_client --additional-properties packageName=swagger_client

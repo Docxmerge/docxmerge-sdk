@@ -9,62 +9,103 @@ namespace Docxmerge.Tests
 {
     public class UnitTest1
     {
-        private const string tenantId = "f60b0638-2f2e-4f92-b027-39cedfa06d4d";
-        private const string apikey = "8f22c304d0b44af2b03c2ad3d1aa5471";
+        private const string apikey = "BUl4qf5pKZZpaSWL9bIuz6bgjJ5ka0";
+
+        #region MergeTest
 
         [Fact]
-        public async Task TestMerge()
+        public async Task TestMergeTemplate()
         {
             var docxmerge = GetDocxmerge();
-            var fileStream = File.Open("./helloworld.docx", FileMode.Open);
-            var stream = await docxmerge.MergeTemplate(tenantId, fileStream, new Dictionary<string, object>
+            var stream = await docxmerge.Merge("carta-pago", new Dictionary<string, object>
             {
-                {"hello_world", "Hello world"}
+                {"Enter Your name:", "Your name"}
             });
-            var destFile = File.OpenWrite("./helloworld_merged.docx");
+            var destFile = File.OpenWrite("./helloworld_merged.pdf");
+            await stream.CopyToAsync(destFile);
+            destFile.Close();
+        }
+
+        private MemoryStream GetFile(string path)
+        {
+            return new MemoryStream(File.ReadAllBytes(path));
+        }
+        [Fact]
+        public async Task TestMergeFile()
+        {
+            var docxmerge = GetDocxmerge();
+            var fileStream = GetFile("./helloworld.docx");
+            var stream = await docxmerge.Merge(fileStream, new Dictionary<string, object>
+            {
+                {"Enter Your name:", "Your name"}
+            });
+            var destFile = File.OpenWrite("./helloworld_merged.pdf");
+            await stream.CopyToAsync(destFile);
+            destFile.Close();
+        }
+
+        #endregion
+
+        #region TransformTests
+
+        [Fact]
+        public async Task TestTransformTemplate()
+        {
+            var docxmerge = GetDocxmerge();
+            var stream = await docxmerge.Transform("carta-pago");
+            var destFile = File.OpenWrite("./helloworld_convert.pdf");
             await stream.CopyToAsync(destFile);
             destFile.Close();
         }
 
         [Fact]
-        public async Task TestConversion()
+        public async Task TestTransformFile()
         {
             var docxmerge = GetDocxmerge();
-            var fileStream = File.Open("./helloworld.docx", FileMode.Open);
-            var stream = await docxmerge.ConvertFile(tenantId, fileStream);
-            var destFile = File.OpenWrite("./helloworld_convert.docx");
-            await stream.CopyToAsync(destFile);
-            destFile.Close();
-        }
-
-        [Fact]
-        public async Task TestTemplateConversion()
-        {
-            var docxmerge = GetDocxmerge();
+            var fileStream = GetFile("./helloworld.docx");
             var stream =
-                await docxmerge.ConvertTemplate(tenantId, "Hello world", 1, new Dictionary<string, string> { });
+                await docxmerge.Transform(fileStream);
             var destFile = File.OpenWrite("./helloworld_convert_2.pdf");
             await stream.CopyToAsync(destFile);
             destFile.Close();
         }
 
+        #endregion
+
+        #region RenderAndTransform
+
         [Fact]
-        public async Task TestPrint()
+        public async Task TestMergeAndTransformFile()
         {
             var docxmerge = GetDocxmerge();
-            var fileStream = File.Open("./helloworld.docx", FileMode.Open);
-            var stream = await docxmerge.RenderFile(tenantId, fileStream, new Dictionary<string, object>
+            var fileStream = GetFile("./helloworld.docx");
+            var stream = await docxmerge.MergeAndTransform(fileStream, new Dictionary<string, object>
             {
-                {"hello_world", "Hello world"}
+                {"hello_world", "Hello world1111"}
             });
             var destFile = File.OpenWrite("./helloworld.pdf");
             await stream.CopyToAsync(destFile);
             destFile.Close();
         }
 
+        [Fact]
+        public async Task TestMergeAndTransformTemplate()
+        {
+            var docxmerge = GetDocxmerge();
+            var stream = await docxmerge.MergeAndTransform("carta-pago", new Dictionary<string, object>
+            {
+                {"hello_world", "Hello world2222"}
+            });
+            var destFile = File.OpenWrite("./helloworld.pdf");
+            await stream.CopyToAsync(destFile);
+            destFile.Close();
+        }
+
+        #endregion
+
         private Docxmerge GetDocxmerge()
         {
-            return new Docxmerge(apikey, "http://localhost:5030");
+            return new Docxmerge(apikey, "https://localhost:5100");
         }
     }
 }

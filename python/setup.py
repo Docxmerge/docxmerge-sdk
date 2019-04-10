@@ -7,7 +7,7 @@ setuptools.setup(
     author_email="davidviejopomata@gmail.com",
     description="Sdk for docxmerge",
     url="https://github.com/Docxmerge/docxmerge-sdk",
-    packages=['docxmerge_sdk', 'docxmerge_sdk.swagger_client', 'docxmerge_sdk.swagger_client.api',
+    packages=['docxmerge_sdk', 'docxmerge_sdk.main', 'docxmerge_sdk.swagger_client', 'docxmerge_sdk.swagger_client.api',
               'docxmerge_sdk.swagger_client.models'],
     package_dir={
         'docxmerge_sdk': 'docxmerge_sdk',

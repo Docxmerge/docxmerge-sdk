@@ -1,1 +1,1967 @@
-{"swagger":"2.0","info":{"version":"v1","title":"DocxMerge"},"basePath":"","paths":{"/api/print":{"post":{"tags":["Api"],"operationId":"ApiPrintPost","consumes":["multipart/form-data","multipart/form-data","multipart/form-data"],"produces":["application/octet-stream"],"parameters":[{"name":"document","in":"formData","required":true,"type":"file"},{"name":"data","in":"formData","required":true,"type":"file"}],"responses":{"200":{"description":"Success","schema":{"type":"file"}},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}}},"/api/hydrate":{"post":{"tags":["Api"],"operationId":"ApiHydratePost","consumes":["multipart/form-data","multipart/form-data"],"produces":["application/octet-stream"],"parameters":[{"name":"document","in":"formData","required":true,"type":"file"},{"name":"fillBorders","in":"query","required":false,"type":"boolean"}],"responses":{"200":{"description":"Success","schema":{"type":"file"}},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}}},"/api/example":{"post":{"tags":["Api"],"summary":"Get json example from file","operationId":"ApiExamplePost","consumes":["multipart/form-data","multipart/form-data"],"produces":["text/plain","application/json","text/json"],"parameters":[{"name":"document","in":"formData","description":"Template document","required":true,"type":"file"}],"responses":{"200":{"description":"Success","schema":{"type":"object"}},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}}},"/api/tenants/{id}":{"get":{"tags":["Api"],"summary":"Get tenant details","operationId":"ApiTenantsByIdGet","consumes":[],"produces":["text/plain","application/json","text/json"],"parameters":[{"name":"id","in":"path","description":"","required":true,"type":"string"}],"responses":{"200":{"description":"Success","schema":{"$ref":"#/definitions/Tenant"}},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}},"put":{"tags":["Api"],"summary":"Updates a tenant","operationId":"ApiTenantsByIdPut","consumes":["application/json-patch+json","application/json","text/json","application/*+json"],"produces":[],"parameters":[{"name":"id","in":"path","description":"","required":true,"type":"string"},{"name":"model","in":"body","description":"","required":false,"schema":{"$ref":"#/definitions/UpdateTenantRequestModel"}}],"responses":{"200":{"description":"Success"},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}},"delete":{"tags":["Api"],"summary":"Deletes a tenant","operationId":"ApiTenantsByIdDelete","consumes":[],"produces":[],"parameters":[{"name":"id","in":"path","description":"","required":true,"type":"string"}],"responses":{"200":{"description":"Success"},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}}},"/api/samples/{name}/download":{"get":{"tags":["Api"],"operationId":"ApiSamplesByNameDownloadGet","consumes":[],"produces":["text/plain","application/json","text/json"],"parameters":[{"name":"name","in":"path","required":true,"type":"string"}],"responses":{"200":{"description":"Success","schema":{"$ref":"#/definitions/Stream"}},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}}},"/api/samples/{name}/json":{"get":{"tags":["Api"],"operationId":"ApiSamplesByNameJsonGet","consumes":[],"produces":["text/plain","application/json","text/json"],"parameters":[{"name":"name","in":"path","required":true,"type":"string"}],"responses":{"200":{"description":"Success","schema":{"$ref":"#/definitions/Stream"}},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}}},"/api/samples/{name}/thumbnail":{"get":{"tags":["Api"],"operationId":"ApiSamplesByNameThumbnailGet","consumes":[],"produces":["text/plain","application/json","text/json"],"parameters":[{"name":"name","in":"path","required":true,"type":"string"}],"responses":{"200":{"description":"Success","schema":{"$ref":"#/definitions/Stream"}},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}}},"/api/samples/{name}/pdf":{"get":{"tags":["Api"],"operationId":"ApiSamplesByNamePdfGet","consumes":[],"produces":["text/plain","application/json","text/json"],"parameters":[{"name":"name","in":"path","required":true,"type":"string"}],"responses":{"200":{"description":"Success","schema":{"$ref":"#/definitions/Stream"}},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}}},"/api/samples/{name}/reports/{id}":{"get":{"tags":["Api"],"operationId":"ApiSamplesByNameReportsByIdGet","consumes":[],"produces":[],"parameters":[{"name":"id","in":"path","required":true,"type":"string"},{"name":"name","in":"path","required":true,"type":"string"}],"responses":{"200":{"description":"Success"},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}}},"/api/samples/{name}/print":{"post":{"tags":["Api"],"operationId":"ApiSamplesByNamePrintPost","consumes":["application/json-patch+json","application/json","text/json","application/*+json"],"produces":[],"parameters":[{"name":"body","in":"body","required":false,"schema":{"type":"object","additionalProperties":{"type":"object"}}},{"name":"name","in":"path","required":true,"type":"string"}],"responses":{"200":{"description":"Success"},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}}},"/api/samples":{"get":{"tags":["Api"],"operationId":"ApiSamplesGet","consumes":[],"produces":["text/plain","application/json","text/json"],"parameters":[],"responses":{"200":{"description":"Success","schema":{"uniqueItems":false,"type":"array","items":{"$ref":"#/definitions/Sample"}}},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}}},"/api/tenants":{"get":{"tags":["Api"],"summary":"Get all tenants a user belongs to","operationId":"ApiTenantsGet","consumes":[],"produces":[],"parameters":[],"responses":{"200":{"description":"Success"},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}},"post":{"tags":["Api"],"summary":"Create tenant for user authenticated","operationId":"ApiTenantsPost","consumes":["application/json-patch+json","application/json","text/json","application/*+json"],"produces":[],"parameters":[{"name":"model","in":"body","description":"Paramters","required":false,"schema":{"$ref":"#/definitions/CreateTenantRequestModel"}}],"responses":{"200":{"description":"Success"},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}}},"/api/user":{"get":{"tags":["Api"],"summary":"Gets current user","operationId":"ApiUserGet","consumes":[],"produces":[],"parameters":[],"responses":{"200":{"description":"Success"},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}}},"/api/tenants/{tenant}/settings":{"get":{"tags":["Config"],"operationId":"ApiTenantsByTenantSettingsGet","consumes":[],"produces":[],"parameters":[{"name":"tenant","in":"path","required":true,"type":"string"}],"responses":{"200":{"description":"Success"},"400":{"description":"Validation failed / Incorrect parameters"}}}},"/api/{tenant}/users":{"get":{"tags":["Management"],"summary":"Get users by tenant","operationId":"ApiByTenantUsersGet","consumes":[],"produces":["text/plain","application/json","text/json"],"parameters":[{"name":"tenant","in":"path","description":"","required":true,"type":"string"}],"responses":{"200":{"description":"Success","schema":{"uniqueItems":false,"type":"array","items":{"$ref":"#/definitions/TenantUser"}}},"400":{"description":"Validation failed / Incorrect parameters"}}}},"/api/{tenant}/files/{fileId}":{"get":{"tags":["Management"],"operationId":"ApiByTenantFilesByFileIdGet","consumes":[],"produces":[],"parameters":[{"name":"fileId","in":"path","required":true,"type":"string"},{"name":"tenant","in":"path","required":true,"type":"string"}],"responses":{"200":{"description":"Success"},"400":{"description":"Validation failed / Incorrect parameters"}}}},"/api/{tenant}/invitations":{"get":{"tags":["Management"],"summary":"Get all invitations","operationId":"ApiByTenantInvitationsGet","consumes":[],"produces":["text/plain","application/json","text/json"],"parameters":[{"name":"tenant","in":"path","description":"","required":true,"type":"string"}],"responses":{"200":{"description":"Success","schema":{"$ref":"#/definitions/Invitation"}},"400":{"description":"Validation failed / Incorrect parameters"}}},"post":{"tags":["Management"],"operationId":"ApiByTenantInvitationsPost","consumes":["application/json-patch+json","application/json","text/json","application/*+json"],"produces":["text/plain","application/json","text/json"],"parameters":[{"name":"tenant","in":"path","required":true,"type":"string"},{"name":"model","in":"body","required":true,"schema":{"$ref":"#/definitions/InvitationRequestModel"}}],"responses":{"200":{"description":"Success","schema":{"$ref":"#/definitions/Invitation"}},"400":{"description":"Validation failed / Incorrect parameters"}}}},"/api/{tenant}/invitations/{id}":{"get":{"tags":["Management"],"summary":"","operationId":"ApiByTenantInvitationsByIdGet","consumes":[],"produces":["text/plain","application/json","text/json"],"parameters":[{"name":"tenant","in":"path","required":true,"type":"string"},{"name":"id","in":"path","required":true,"type":"string"}],"responses":{"200":{"description":"Success","schema":{"$ref":"#/definitions/Invitation"}},"400":{"description":"Validation failed / Incorrect parameters"}}},"delete":{"tags":["Management"],"summary":"Delete invitation","operationId":"ApiByTenantInvitationsByIdDelete","consumes":[],"produces":[],"parameters":[{"name":"tenant","in":"path","description":"","required":true,"type":"string"},{"name":"id","in":"path","description":"","required":true,"type":"string"}],"responses":{"200":{"description":"Success"},"400":{"description":"Validation failed / Incorrect parameters"}}}},"/api/tenants/{tenant}/invitations/{invitationId}/callback":{"get":{"tags":["Management"],"operationId":"ApiTenantsByTenantInvitationsByInvitationIdCallbackGet","consumes":[],"produces":[],"parameters":[{"name":"invitationId","in":"path","required":true,"type":"string"},{"name":"tenant","in":"path","required":true,"type":"string"},{"name":"success","in":"query","required":false,"type":"boolean"},{"name":"email","in":"query","required":false,"type":"string"},{"name":"message","in":"query","required":false,"type":"string"}],"responses":{"200":{"description":"Success"},"400":{"description":"Validation failed / Incorrect parameters"}}}},"/api/{tenant}/payments":{"get":{"tags":["Payments"],"summary":"Get all the payments","operationId":"ApiByTenantPaymentsGet","consumes":[],"produces":["text/plain","application/json","text/json"],"parameters":[{"name":"tenant","in":"path","description":"Tenant id","required":true,"type":"string"}],"responses":{"200":{"description":"Success","schema":{"uniqueItems":false,"type":"array","items":{"$ref":"#/definitions/PaymentTransaction"}}},"400":{"description":"Validation failed / Incorrect parameters"}}},"post":{"tags":["Payments"],"summary":"Add credits to the tenant using stripe","operationId":"ApiByTenantPaymentsPost","consumes":["application/json-patch+json","application/json","text/json","application/*+json"],"produces":[],"parameters":[{"name":"tenant","in":"path","description":"Tenant id","required":true,"type":"string"},{"name":"token","in":"query","description":"Stripe token","required":true,"type":"string"},{"name":"model","in":"body","description":"","required":true,"schema":{"$ref":"#/definitions/PaymentRequestModel"}}],"responses":{"200":{"description":"Success"},"400":{"description":"Validation failed / Incorrect parameters"}}}},"/api/{tenant}/payments/{id}":{"get":{"tags":["Payments"],"summary":"Get payment by id","operationId":"ApiByTenantPaymentsByIdGet","consumes":[],"produces":[],"parameters":[{"name":"id","in":"path","description":"Payment id","required":true,"type":"string"},{"name":"tenant","in":"path","description":"Tenant id","required":true,"type":"string"}],"responses":{"200":{"description":"Success"},"400":{"description":"Validation failed / Incorrect parameters"}}}},"/api/ping":{"get":{"tags":["Ping"],"operationId":"ApiPingGet","consumes":[],"produces":[],"parameters":[],"responses":{"200":{"description":"Success"},"400":{"description":"Validation failed / Incorrect parameters"}}}},"/api/{tenant}/merge":{"post":{"tags":["Templates"],"operationId":"ApiByTenantMergePost","consumes":["multipart/form-data","multipart/form-data","multipart/form-data"],"produces":["application/octet-stream"],"parameters":[{"name":"tenant","in":"path","required":true,"type":"string"},{"name":"document","in":"formData","required":true,"type":"file"},{"name":"data","in":"formData","required":true,"type":"file"}],"responses":{"200":{"description":"Success","schema":{"type":"file"}},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}}},"/api/{tenant}/templates/{id}":{"get":{"tags":["Templates"],"operationId":"ApiByTenantTemplatesByIdGet","consumes":[],"produces":["text/plain","application/json","text/json"],"parameters":[{"name":"id","in":"path","required":true,"type":"string"},{"name":"tenant","in":"path","required":true,"type":"string"}],"responses":{"200":{"description":"Success","schema":{"$ref":"#/definitions/Template"}},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}},"delete":{"tags":["Templates"],"summary":"Deletes template by the id","operationId":"ApiByTenantTemplatesByIdDelete","consumes":[],"produces":[],"parameters":[{"name":"tenant","in":"path","description":"Tenant id","required":true,"type":"string"},{"name":"id","in":"path","description":"Template id","required":true,"type":"string"}],"responses":{"204":{"description":"Success"},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}}},"/api/{tenant}/example":{"post":{"tags":["Templates"],"summary":"Get json example from file","operationId":"ApiByTenantExamplePost","consumes":["multipart/form-data","multipart/form-data"],"produces":["text/plain","application/json","text/json"],"parameters":[{"name":"document","in":"formData","description":"Template document","required":true,"type":"file"},{"name":"tenant","in":"path","required":true,"type":"string"}],"responses":{"200":{"description":"Success","schema":{"type":"object"}},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}}},"/api/{tenant}/convert":{"post":{"tags":["Templates"],"summary":"Converts and generates a file with json.","operationId":"ApiByTenantConvertPost","consumes":["multipart/form-data","multipart/form-data"],"produces":["application/octet-stream"],"parameters":[{"name":"document","in":"formData","description":"Template file","required":true,"type":"file"},{"name":"tenant","in":"path","required":true,"type":"string"}],"responses":{"200":{"description":"Success","schema":{"type":"file"}},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}}},"/api/{tenant}/print":{"post":{"tags":["Templates"],"summary":"Converts and generates a file with json.","operationId":"ApiByTenantPrintPost","consumes":["multipart/form-data","multipart/form-data","multipart/form-data"],"produces":["application/octet-stream"],"parameters":[{"name":"tenant","in":"path","required":true,"type":"string"},{"name":"document","in":"formData","description":"Template file","required":true,"type":"file"},{"name":"data","in":"formData","description":"Json data","required":true,"type":"file"}],"responses":{"200":{"description":"Success","schema":{"type":"file"}},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}}},"/api/{tenant}/templates":{"get":{"tags":["Templates"],"summary":"Get all templates","operationId":"ApiByTenantTemplatesGet","consumes":[],"produces":["text/plain","application/json","text/json"],"parameters":[{"name":"tenant","in":"path","required":true,"type":"string"},{"name":"size","in":"query","required":false,"type":"integer","format":"int32","default":10},{"name":"page","in":"query","required":false,"type":"integer","format":"int32","default":0}],"responses":{"200":{"description":"Success","schema":{"$ref":"#/definitions/TemplateListResponseModel"}},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}},"post":{"tags":["Templates"],"operationId":"ApiByTenantTemplatesPost","consumes":["application/json-patch+json","application/json","text/json","application/*+json"],"produces":["text/plain","application/json","text/json"],"parameters":[{"name":"tenant","in":"path","required":true,"type":"string"},{"name":"model","in":"body","required":false,"schema":{"$ref":"#/definitions/TemplateRequestModel"}}],"responses":{"200":{"description":"Success","schema":{"$ref":"#/definitions/Template"}},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}}},"/api/{tenant}/templates/id":{"put":{"tags":["Templates"],"summary":"Updates the template","operationId":"ApiByTenantTemplatesIdPut","consumes":["application/json-patch+json","application/json","text/json","application/*+json"],"produces":[],"parameters":[{"name":"tenant","in":"path","description":"","required":true,"type":"string"},{"name":"id","in":"query","description":"","required":false,"type":"string"},{"name":"model","in":"body","description":"","required":false,"schema":{"$ref":"#/definitions/TemplateRequestModel"}}],"responses":{"200":{"description":"Success"},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}}},"/api/{tenant}/templates/{id}/files/{fileId}/example":{"get":{"tags":["Templates"],"operationId":"ApiByTenantTemplatesByIdFilesByFileIdExampleGet","consumes":[],"produces":[],"parameters":[{"name":"id","in":"path","required":true,"type":"string"},{"name":"tenant","in":"path","required":true,"type":"string"},{"name":"fileId","in":"path","required":true,"type":"string"}],"responses":{"200":{"description":"Success"},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}}},"/api/{tenant}/reports/{id}":{"get":{"tags":["Templates"],"summary":"Get report file","operationId":"ApiByTenantReportsByIdGet","consumes":[],"produces":["application/octet-stream"],"parameters":[{"name":"id","in":"path","description":"Report id","required":true,"type":"string"},{"name":"tenant","in":"path","description":"Tenant id","required":true,"type":"string"}],"responses":{"200":{"description":"Success","schema":{"type":"file"}},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}}},"/api/{tenant}/templates/{id}/files/{fileId}/reports":{"get":{"tags":["Templates"],"operationId":"ApiByTenantTemplatesByIdFilesByFileIdReportsGet","consumes":[],"produces":["text/plain","application/json","text/json"],"parameters":[{"name":"id","in":"path","required":true,"type":"string"},{"name":"fileId","in":"path","required":true,"type":"string"},{"name":"tenant","in":"path","required":true,"type":"string"},{"name":"page","in":"query","required":false,"type":"integer","format":"int32","default":0},{"name":"size","in":"query","required":false,"type":"integer","format":"int32","default":20}],"responses":{"200":{"description":"Success","schema":{"$ref":"#/definitions/ReportListResponseModel"}},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}}},"/api/{tenant}/templates/{id}/files/{fileId}/download":{"get":{"tags":["Templates"],"operationId":"ApiByTenantTemplatesByIdFilesByFileIdDownloadGet","consumes":[],"produces":[],"parameters":[{"name":"id","in":"path","required":true,"type":"string"},{"name":"fileId","in":"path","required":true,"type":"string"},{"name":"tenant","in":"path","required":true,"type":"string"}],"responses":{"200":{"description":"Success"},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}}},"/api/{tenant}/templates/{templateName}/convert":{"post":{"tags":["Templates"],"operationId":"ApiByTenantTemplatesByTemplateNameConvertPost","consumes":[],"produces":["application/octet-stream"],"parameters":[{"name":"templateName","in":"path","required":true,"type":"string"},{"name":"tenant","in":"path","required":true,"type":"string"},{"name":"version","in":"query","required":false,"type":"integer","format":"int32"},{"name":"debug","in":"query","required":false,"type":"boolean"},{"name":"queryAttributes","in":"query","required":false,"type":"object"},{"name":"env","in":"query","required":false,"type":"string","enum":["DRAFT","TESTING","PRODUCTION"]}],"responses":{"200":{"description":"Success","schema":{"type":"file"}},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}}},"/api/{tenant}/templates/{templateName}/render":{"post":{"tags":["Templates"],"operationId":"ApiByTenantTemplatesByTemplateNameRenderPost","consumes":["application/json-patch+json","application/json","text/json","application/*+json"],"produces":["text/plain","application/json","text/json"],"parameters":[{"name":"templateName","in":"path","required":true,"type":"string"},{"name":"tenant","in":"path","required":true,"type":"string"},{"name":"version","in":"query","required":false,"type":"integer","format":"int32"},{"name":"debug","in":"query","required":false,"type":"boolean"},{"name":"json","in":"body","required":true,"schema":{"type":"object","additionalProperties":{"type":"object"}}},{"name":"queryAttributes","in":"query","required":false,"type":"object"},{"name":"env","in":"query","required":false,"type":"string","enum":["DRAFT","TESTING","PRODUCTION"]}],"responses":{"201":{"description":"Success","schema":{"$ref":"#/definitions/Report"}},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}}},"/api/{tenant}/templates/{id}/files/{fileId}/render":{"post":{"tags":["Templates"],"summary":"Render template with json","operationId":"ApiByTenantTemplatesByIdFilesByFileIdRenderPost","consumes":["application/json-patch+json","application/json","text/json","application/*+json"],"produces":["text/plain","application/json","text/json"],"parameters":[{"name":"id","in":"path","description":"","required":true,"type":"string"},{"name":"tenant","in":"path","description":"","required":true,"type":"string"},{"name":"fileId","in":"path","description":"","required":true,"type":"string"},{"name":"version","in":"query","description":"","required":false,"type":"integer","format":"int32"},{"name":"attributes","in":"query","required":false,"type":"array","items":{"type":"string"},"collectionFormat":"multi","uniqueItems":false},{"name":"debug","in":"query","description":"","required":false,"type":"boolean"},{"name":"json","in":"body","description":"","required":true,"schema":{"type":"object","additionalProperties":{"type":"object"}}}],"responses":{"201":{"description":"Success","schema":{"$ref":"#/definitions/Report"}},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}}},"/api/{tenant}/templates/{id}/files/{fileId}":{"get":{"tags":["Templates"],"summary":"Get file by id","operationId":"ApiByTenantTemplatesByIdFilesByFileIdGet","consumes":[],"produces":["text/plain","application/json","text/json"],"parameters":[{"name":"id","in":"path","description":"","required":true,"type":"string"},{"name":"tenant","in":"path","description":"","required":true,"type":"string"},{"name":"fileId","in":"path","description":"","required":true,"type":"string"}],"responses":{"200":{"description":"Success","schema":{"$ref":"#/definitions/TemplateVersionFile"}},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}},"delete":{"tags":["Templates"],"summary":"Delete file belonging to a template","operationId":"ApiByTenantTemplatesByIdFilesByFileIdDelete","consumes":[],"produces":[],"parameters":[{"name":"id","in":"path","description":"Template id","required":true,"type":"string"},{"name":"tenant","in":"path","description":"Tenant id","required":true,"type":"string"},{"name":"fileId","in":"path","description":"File id","required":true,"type":"string"}],"responses":{"204":{"description":"Success"},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}},"patch":{"tags":["Templates"],"summary":"Updates a file with attributes, file, and status","operationId":"ApiByTenantTemplatesByIdFilesByFileIdPatch","consumes":["multipart/form-data","multipart/form-data"],"produces":[],"parameters":[{"name":"id","in":"path","description":"","required":true,"type":"string"},{"name":"tenant","in":"path","description":"","required":true,"type":"string"},{"name":"fileId","in":"path","description":"","required":true,"type":"string"},{"name":"file","in":"formData","description":"","required":false,"type":"file"},{"name":"Status","in":"formData","required":false,"type":"string","enum":["DRAFT","TESTING","PRODUCTION"]},{"name":"Attributes","in":"formData","required":false,"type":"array","items":{"type":"string"},"collectionFormat":"multi","uniqueItems":false}],"responses":{"200":{"description":"Success"},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}}},"/api/{tenant}/templates/{id}/files/{fileId}/status":{"post":{"tags":["Templates"],"summary":"Set template status","operationId":"ApiByTenantTemplatesByIdFilesByFileIdStatusPost","consumes":[],"produces":[],"parameters":[{"name":"id","in":"path","description":"","required":true,"type":"string"},{"name":"tenant","in":"path","description":"","required":true,"type":"string"},{"name":"fileId","in":"path","description":"","required":true,"type":"string"},{"name":"status","in":"query","description":"","required":true,"type":"string","enum":["DRAFT","TESTING","PRODUCTION"]}],"responses":{"200":{"description":"Success"},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}}},"/api/{tenant}/templates/{id}/files/{fileId}/samples":{"get":{"tags":["Templates"],"operationId":"ApiByTenantTemplatesByIdFilesByFileIdSamplesGet","consumes":[],"produces":["text/plain","application/json","text/json"],"parameters":[{"name":"id","in":"path","required":true,"type":"string"},{"name":"tenant","in":"path","required":true,"type":"string"},{"name":"fileId","in":"path","required":true,"type":"string"}],"responses":{"200":{"description":"Success","schema":{"$ref":"#/definitions/CodeSamplesResponse"}},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}}},"/api/{tenant}/templates/{id}/files":{"post":{"tags":["Templates"],"summary":"Creates a file","operationId":"ApiByTenantTemplatesByIdFilesPost","consumes":["multipart/form-data","multipart/form-data"],"produces":["text/plain","application/json","text/json"],"parameters":[{"name":"id","in":"path","description":"","required":true,"type":"string"},{"name":"tenant","in":"path","description":"","required":true,"type":"string"},{"name":"file","in":"formData","description":"","required":true,"type":"file"},{"name":"Attributes","in":"formData","required":false,"type":"array","items":{"type":"string"},"collectionFormat":"multi","uniqueItems":false}],"responses":{"201":{"description":"Success","schema":{"$ref":"#/definitions/TemplateVersionFile"}},"400":{"description":"Validation failed / Incorrect parameters"},"401":{"description":"Unauthorized"}}}}},"definitions":{"IFormFile":{"type":"object","properties":{"contentType":{"type":"string","readOnly":true},"contentDisposition":{"type":"string","readOnly":true},"headers":{"type":"object","additionalProperties":{"uniqueItems":false,"type":"array","items":{"type":"string"}},"readOnly":true},"length":{"format":"int64","type":"integer","readOnly":true},"name":{"type":"string","readOnly":true},"fileName":{"type":"string","readOnly":true}}},"FileStreamResult":{"type":"object","properties":{"fileStream":{"$ref":"#/definitions/Stream"},"contentType":{"type":"string","readOnly":true},"fileDownloadName":{"type":"string"},"lastModified":{"format":"date-time","type":"string"},"entityTag":{"$ref":"#/definitions/EntityTagHeaderValue"},"enableRangeProcessing":{"type":"boolean"}}},"Stream":{"type":"object","properties":{"canRead":{"type":"boolean","readOnly":true},"canSeek":{"type":"boolean","readOnly":true},"canTimeout":{"type":"boolean","readOnly":true},"canWrite":{"type":"boolean","readOnly":true},"length":{"format":"int64","type":"integer","readOnly":true},"position":{"format":"int64","type":"integer"},"readTimeout":{"format":"int32","type":"integer"},"writeTimeout":{"format":"int32","type":"integer"}}},"EntityTagHeaderValue":{"type":"object","properties":{"tag":{"$ref":"#/definitions/StringSegment","readOnly":true},"isWeak":{"type":"boolean","readOnly":true}}},"StringSegment":{"type":"object","properties":{"buffer":{"type":"string","readOnly":true},"offset":{"format":"int32","type":"integer","readOnly":true},"length":{"format":"int32","type":"integer","readOnly":true},"value":{"type":"string","readOnly":true},"hasValue":{"type":"boolean","readOnly":true}}},"Tenant":{"type":"object","properties":{"id":{"type":"string"},"created":{"format":"date-time","type":"string"},"modified":{"format":"date-time","type":"string"},"name":{"type":"string"},"apiKey":{"type":"string"},"templates":{"uniqueItems":false,"type":"array","items":{"$ref":"#/definitions/Template"}},"users":{"uniqueItems":false,"type":"array","items":{"$ref":"#/definitions/TenantUser"}},"invitations":{"uniqueItems":false,"type":"array","items":{"$ref":"#/definitions/Invitation"}}}},"Template":{"required":["tenantId"],"type":"object","properties":{"name":{"type":"string"},"templateGroups":{"uniqueItems":false,"type":"array","items":{"$ref":"#/definitions/TemplateGroup"}},"templateVersionFiles":{"uniqueItems":false,"type":"array","items":{"$ref":"#/definitions/TemplateVersionFile"}},"id":{"type":"string"},"created":{"format":"date-time","type":"string"},"modified":{"format":"date-time","type":"string"},"tenant":{"$ref":"#/definitions/Tenant"},"tenantId":{"type":"string"}}},"TenantUser":{"required":["tenantId"],"type":"object","properties":{"user":{"$ref":"#/definitions/User"},"userId":{"type":"string"},"paymentTransactions":{"uniqueItems":false,"type":"array","items":{"$ref":"#/definitions/PaymentTransaction"}},"id":{"type":"string"},"created":{"format":"date-time","type":"string"},"modified":{"format":"date-time","type":"string"},"tenant":{"$ref":"#/definitions/Tenant"},"tenantId":{"type":"string"}}},"Invitation":{"required":["tenantId"],"type":"object","properties":{"consumedTime":{"format":"date-time","type":"string"},"email":{"type":"string"},"metadata":{"$ref":"#/definitions/InvitationMetadata"},"id":{"type":"string"},"created":{"format":"date-time","type":"string"},"modified":{"format":"date-time","type":"string"},"tenant":{"$ref":"#/definitions/Tenant"},"tenantId":{"type":"string"}}},"TemplateGroup":{"required":["tenantId"],"type":"object","properties":{"template":{"$ref":"#/definitions/Template"},"templateId":{"type":"string"},"group":{"$ref":"#/definitions/Group"},"groupId":{"type":"string"},"id":{"type":"string"},"created":{"format":"date-time","type":"string"},"modified":{"format":"date-time","type":"string"},"tenant":{"$ref":"#/definitions/Tenant"},"tenantId":{"type":"string"}}},"TemplateVersionFile":{"required":["tenantId"],"type":"object","properties":{"template":{"$ref":"#/definitions/Template"},"templateId":{"type":"string"},"appFileId":{"type":"string"},"appFile":{"$ref":"#/definitions/AppFile"},"status":{"enum":["DRAFT","TESTING","PRODUCTION"],"type":"string"},"version":{"format":"int32","type":"integer"},"attributes":{"uniqueItems":false,"type":"array","items":{"type":"string"}},"example":{"type":"object","additionalProperties":{"type":"object"}},"reports":{"uniqueItems":false,"type":"array","items":{"$ref":"#/definitions/Report"}},"id":{"type":"string"},"created":{"format":"date-time","type":"string"},"modified":{"format":"date-time","type":"string"},"tenant":{"$ref":"#/definitions/Tenant"},"tenantId":{"type":"string"}}},"User":{"type":"object","properties":{"id":{"type":"string"},"created":{"format":"date-time","type":"string"},"modified":{"format":"date-time","type":"string"},"subId":{"type":"string"},"email":{"type":"string"},"tenantUsers":{"uniqueItems":false,"type":"array","items":{"$ref":"#/definitions/TenantUser"}}}},"PaymentTransaction":{"required":["tenantId"],"type":"object","properties":{"user":{"$ref":"#/definitions/User"},"userId":{"type":"string"},"price":{"format":"int32","type":"integer"},"credits":{"format":"int32","type":"integer"},"customerId":{"type":"string"},"chargeId":{"type":"string"},"id":{"type":"string"},"created":{"format":"date-time","type":"string"},"modified":{"format":"date-time","type":"string"},"tenant":{"$ref":"#/definitions/Tenant"},"tenantId":{"type":"string"}}},"InvitationMetadata":{"required":["subId","resultUrl","ticketUrl","role"],"type":"object","properties":{"subId":{"type":"string"},"resultUrl":{"type":"string"},"ticketUrl":{"type":"string"},"role":{"type":"string"},"permissions":{"uniqueItems":false,"type":"array","items":{"type":"string"}}}},"Group":{"required":["tenantId"],"type":"object","properties":{"name":{"type":"string"},"templateGroups":{"uniqueItems":false,"type":"array","items":{"$ref":"#/definitions/TemplateGroup"}},"id":{"type":"string"},"created":{"format":"date-time","type":"string"},"modified":{"format":"date-time","type":"string"},"tenant":{"$ref":"#/definitions/Tenant"},"tenantId":{"type":"string"}}},"AppFile":{"required":["tenantId"],"type":"object","properties":{"originalName":{"type":"string"},"objectName":{"type":"string"},"bucket":{"type":"string"},"metadata":{"type":"object","additionalProperties":{"type":"object"}},"size":{"format":"int32","type":"integer"},"id":{"type":"string"},"created":{"format":"date-time","type":"string"},"modified":{"format":"date-time","type":"string"},"tenant":{"$ref":"#/definitions/Tenant"},"tenantId":{"type":"string"}}},"Report":{"required":["tenantId"],"type":"object","properties":{"data":{"type":"object","additionalProperties":{"type":"object"}},"templateFile":{"$ref":"#/definitions/AppFile"},"templateFileId":{"type":"string"},"resultFile":{"$ref":"#/definitions/AppFile"},"resultFileId":{"type":"string"},"templateVersionFile":{"$ref":"#/definitions/TemplateVersionFile"},"id":{"type":"string"},"created":{"format":"date-time","type":"string"},"modified":{"format":"date-time","type":"string"},"tenant":{"$ref":"#/definitions/Tenant"},"tenantId":{"type":"string"}}},"UpdateTenantRequestModel":{"required":["organization"],"type":"object","properties":{"organization":{"type":"string"}}},"Sample":{"type":"object","properties":{"name":{"type":"string"},"preview":{"type":"string"}}},"CreateTenantRequestModel":{"required":["organization"],"type":"object","properties":{"organization":{"type":"string"}}},"InvitationRequestModel":{"required":["role","email"],"type":"object","properties":{"role":{"type":"string"},"email":{"type":"string"}}},"PaymentRequestModel":{"type":"object","properties":{"credits":{"format":"int32","type":"integer"}}},"TemplateListResponseModel":{"type":"object","properties":{"templates":{"uniqueItems":false,"type":"array","items":{"$ref":"#/definitions/TemplateModel"}},"total":{"format":"int32","type":"integer"}}},"TemplateModel":{"type":"object","properties":{"name":{"type":"string"},"id":{"type":"string"},"created":{"format":"date-time","type":"string"},"tags":{"uniqueItems":false,"type":"array","items":{"$ref":"#/definitions/Tag"}},"versions":{"type":"object","additionalProperties":{"uniqueItems":false,"type":"array","items":{"$ref":"#/definitions/TemplateVersionFile"}}}}},"Tag":{"type":"object","properties":{"id":{"type":"string"},"name":{"type":"string"}}},"TemplateRequestModel":{"required":["name"],"type":"object","properties":{"tags":{"uniqueItems":false,"type":"array","items":{"type":"string"}},"name":{"type":"string"}}},"ReportListResponseModel":{"type":"object","properties":{"reports":{"uniqueItems":false,"type":"array","items":{"$ref":"#/definitions/Report"}},"total":{"format":"int32","type":"integer"}}},"CodeSamplesResponse":{"type":"object","properties":{"nodejs":{"type":"string"},"dotnet":{"type":"string"},"python":{"type":"string"},"php":{"type":"string"},"curl":{"type":"string"},"ruby":{"type":"string"}}}},"securityDefinitions":{"ApiKey":{"name":"ApiKey","in":"header","type":"apiKey"},"Bearer":{"name":"Authorization","in":"header","type":"apiKey"}},"security":[{"Bearer":[]}]}
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Docxmerge",
+    "description": "",
+    "contact": {
+      "name": "David Viejo",
+      "email": "davidviejopomata@gmail.com"
+    },
+    "version": "1.0"
+  },
+  "paths": {
+    "/api/v1/Admin/GetPlantilla": {
+      "get": {
+        "tags": [
+          "RemoteAdmin"
+        ],
+        "operationId": "GetPlantilla",
+        "parameters": [
+          {
+            "name": "template",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlantillaViewModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlantillaViewModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlantillaViewModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Admin/ActualizarPlantilla": {
+      "post": {
+        "tags": [
+          "RemoteAdmin"
+        ],
+        "operationId": "ActualizarPlantilla",
+        "parameters": [
+          {
+            "name": "plantilla",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "ficheroId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlantillaViewModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlantillaViewModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlantillaViewModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Admin/GetPlantillas": {
+      "get": {
+        "tags": [
+          "RemoteAdmin"
+        ],
+        "operationId": "GetPlantillas",
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "filterNombre",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "filterTags",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlantillaListViewModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlantillaListViewModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlantillaListViewModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Admin/CrearPlantilla": {
+      "post": {
+        "tags": [
+          "RemoteAdmin"
+        ],
+        "operationId": "CrearPlantilla",
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearPlantillaModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearPlantillaModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearPlantillaModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearPlantillaModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Plantilla"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Plantilla"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Plantilla"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Admin/EliminarPlantilla": {
+      "delete": {
+        "tags": [
+          "RemoteAdmin"
+        ],
+        "operationId": "EliminarPlantilla",
+        "parameters": [
+          {
+            "name": "nombre",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/v1/Admin/TransformFile": {
+      "post": {
+        "tags": [
+          "RemoteAdmin"
+        ],
+        "operationId": "TransformFile",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "file"
+                ],
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Admin/MergeFile": {
+      "post": {
+        "tags": [
+          "RemoteAdmin"
+        ],
+        "operationId": "MergeFile",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object"
+              }
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "file"
+                ],
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Admin/MergeAndTransform": {
+      "post": {
+        "tags": [
+          "RemoteAdmin"
+        ],
+        "operationId": "MergeAndTransform",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object"
+              }
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "file"
+                ],
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Admin/MergeAndTransformTemplateGet": {
+      "get": {
+        "tags": [
+          "RemoteAdmin"
+        ],
+        "operationId": "MergeAndTransformTemplateGet",
+        "parameters": [
+          {
+            "name": "template",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "json",
+            "in": "query",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Admin/MergeAndTransformTemplatePost": {
+      "post": {
+        "tags": [
+          "RemoteAdmin"
+        ],
+        "operationId": "MergeAndTransformTemplatePost",
+        "parameters": [
+          {
+            "name": "template",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object"
+                }
+              }
+            },
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object"
+                }
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object"
+                }
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Admin/TransformTemplate": {
+      "post": {
+        "tags": [
+          "RemoteAdmin"
+        ],
+        "operationId": "TransformTemplate",
+        "parameters": [
+          {
+            "name": "template",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "RemoteAdmin"
+        ],
+        "operationId": "TransformTemplate",
+        "parameters": [
+          {
+            "name": "template",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Admin/MergeTemplate": {
+      "post": {
+        "tags": [
+          "RemoteAdmin"
+        ],
+        "operationId": "MergeTemplate",
+        "parameters": [
+          {
+            "name": "template",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object"
+                }
+              }
+            },
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object"
+                }
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object"
+                }
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Admin/GetEjemplos": {
+      "get": {
+        "tags": [
+          "RemoteAdmin"
+        ],
+        "operationId": "GetEjemplos",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/v1/Admin/ImportarEjemplo": {
+      "post": {
+        "tags": [
+          "RemoteAdmin"
+        ],
+        "operationId": "ImportarEjemplo",
+        "parameters": [
+          {
+            "name": "ejemplo",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Plantilla"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Plantilla"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Plantilla"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Admin/GetPreview": {
+      "get": {
+        "tags": [
+          "RemoteAdmin"
+        ],
+        "operationId": "GetPreview",
+        "parameters": [
+          {
+            "name": "ejemplo",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Auth/Logout": {
+      "get": {
+        "tags": [
+          "RemoteAuth"
+        ],
+        "operationId": "Logout",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/v1/Auth/Login": {
+      "post": {
+        "tags": [
+          "RemoteAuth"
+        ],
+        "operationId": "Login",
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginModelInputModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginModelInputModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginModelInputModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginModelInputModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/v1/Auth/GetExternalLogins": {
+      "get": {
+        "tags": [
+          "RemoteAuth"
+        ],
+        "operationId": "GetExternalLogins",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AuthenticationSchemeViewModel"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AuthenticationSchemeViewModel"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AuthenticationSchemeViewModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Auth/ExternalLogin": {
+      "get": {
+        "tags": [
+          "RemoteAuth"
+        ],
+        "operationId": "ExternalLogin",
+        "parameters": [
+          {
+            "name": "provider",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "orgaEntornoId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "returnUrl",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/v1/Auth/ExternalLoginCallback": {
+      "get": {
+        "tags": [
+          "RemoteAuth"
+        ],
+        "operationId": "ExternalLoginCallback",
+        "parameters": [
+          {
+            "name": "returnUrl",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/v1/Auth/Registrar": {
+      "post": {
+        "tags": [
+          "RemoteAuth"
+        ],
+        "operationId": "Registrar",
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterModelInputModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterModelInputModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterModelInputModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterModelInputModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/v1/Auth/GetUser": {
+      "get": {
+        "tags": [
+          "RemoteAuth"
+        ],
+        "operationId": "GetUser",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserViewModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserViewModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserViewModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/File/GetFileById": {
+      "get": {
+        "tags": [
+          "RemoteFile"
+        ],
+        "operationId": "GetFileById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Fichero"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Fichero"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Fichero"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/File/GetContenido": {
+      "get": {
+        "tags": [
+          "RemoteFile"
+        ],
+        "operationId": "GetContenido",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "download",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/File/SubirFichero": {
+      "post": {
+        "tags": [
+          "RemoteFile"
+        ],
+        "operationId": "SubirFichero",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "file"
+                ],
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Fichero"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Fichero"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Fichero"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Public/GetEjemplos": {
+      "get": {
+        "tags": [
+          "RemotePublic"
+        ],
+        "operationId": "GetEjemplos",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Ejemplo"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Ejemplo"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Ejemplo"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Public/RenderEjemplo": {
+      "post": {
+        "tags": [
+          "RemotePublic"
+        ],
+        "operationId": "RenderEjemplo",
+        "parameters": [
+          {
+            "name": "nombre",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object"
+                }
+              }
+            },
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object"
+                }
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object"
+                }
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "PlantillaViewModel": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "exampleData": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "slug": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "templateUrl": {
+            "type": "string"
+          },
+          "fileId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PlantillaListViewModel": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "plantillas": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlantillaViewModel"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "CrearPlantillaModel": {
+        "required": [
+          "ficheroId",
+          "nombre"
+        ],
+        "type": "object",
+        "properties": {
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "nombre": {
+            "type": "string"
+          },
+          "ficheroId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Fichero": {
+        "required": [
+          "bucket",
+          "contentType",
+          "created",
+          "hash",
+          "hashType",
+          "mimeType",
+          "modified",
+          "nombreOriginal",
+          "objectName",
+          "size",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "bucket": {
+            "type": "string"
+          },
+          "objectName": {
+            "type": "string"
+          },
+          "contentType": {
+            "type": "string"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "nombreOriginal": {
+            "type": "string"
+          },
+          "mimeType": {
+            "enum": [
+              "PDF",
+              "DOCX",
+              "TEXT",
+              "JPG",
+              "PNG",
+              "XML",
+              "CSV",
+              "UNKNOWN"
+            ],
+            "type": "string"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "hashType": {
+            "enum": [
+              "SHA1",
+              "SHA256",
+              "SHA384",
+              "SHA512",
+              "MD5"
+            ],
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "id": {
+            "type": "string"
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "modified": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserRole": {
+        "required": [
+          "orgaId"
+        ],
+        "type": "object",
+        "properties": {
+          "orga": {
+            "$ref": "#/components/schemas/Orga"
+          },
+          "orgaId": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "roleId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ApplicationUser": {
+        "required": [
+          "apiKey"
+        ],
+        "type": "object",
+        "properties": {
+          "lastLoginTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "registrationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "apiKey": {
+            "type": "string"
+          },
+          "orgas": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrgaUser"
+            }
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserRole"
+            }
+          },
+          "id": {
+            "type": "string"
+          },
+          "userName": {
+            "type": "string"
+          },
+          "normalizedUserName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "normalizedEmail": {
+            "type": "string"
+          },
+          "emailConfirmed": {
+            "type": "boolean"
+          },
+          "passwordHash": {
+            "type": "string"
+          },
+          "securityStamp": {
+            "type": "string"
+          },
+          "concurrencyStamp": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "phoneNumberConfirmed": {
+            "type": "boolean"
+          },
+          "twoFactorEnabled": {
+            "type": "boolean"
+          },
+          "lockoutEnd": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lockoutEnabled": {
+            "type": "boolean"
+          },
+          "accessFailedCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OrgaUser": {
+        "required": [
+          "created",
+          "modified",
+          "orga",
+          "user",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "orga": {
+            "$ref": "#/components/schemas/Orga"
+          },
+          "orgaId": {
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/ApplicationUser"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "id": {
+            "type": "string"
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "modified": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Orga": {
+        "required": [
+          "created",
+          "modified",
+          "nombre",
+          "slug",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "nombre": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "usuarios": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrgaUser"
+            }
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "id": {
+            "type": "string"
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "modified": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Impresion": {
+        "required": [
+          "created",
+          "datos",
+          "input",
+          "modified",
+          "orgaId",
+          "output",
+          "plantilla",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "input": {
+            "$ref": "#/components/schemas/Fichero"
+          },
+          "datos": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "output": {
+            "$ref": "#/components/schemas/Fichero"
+          },
+          "plantilla": {
+            "$ref": "#/components/schemas/Plantilla"
+          },
+          "orga": {
+            "$ref": "#/components/schemas/Orga"
+          },
+          "orgaId": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "id": {
+            "type": "string"
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "modified": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PlantillaHistoria": {
+        "required": [
+          "created",
+          "ejemplo",
+          "fichero",
+          "modified",
+          "orgaId",
+          "plantilla",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "plantilla": {
+            "$ref": "#/components/schemas/Plantilla"
+          },
+          "fichero": {
+            "$ref": "#/components/schemas/Fichero"
+          },
+          "ficheroId": {
+            "type": "string"
+          },
+          "ejemplo": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "orga": {
+            "$ref": "#/components/schemas/Orga"
+          },
+          "orgaId": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "id": {
+            "type": "string"
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "modified": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Plantilla": {
+        "required": [
+          "created",
+          "ejemplo",
+          "fichero",
+          "modified",
+          "nombre",
+          "orgaId",
+          "slug",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "nombre": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "fichero": {
+            "$ref": "#/components/schemas/Fichero"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "ejemplo": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "impresiones": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Impresion"
+            }
+          },
+          "historico": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlantillaHistoria"
+            }
+          },
+          "orga": {
+            "$ref": "#/components/schemas/Orga"
+          },
+          "orgaId": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "id": {
+            "type": "string"
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "modified": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "LoginModelInputModel": {
+        "required": [
+          "email",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string",
+            "format": "password"
+          },
+          "rememberMe": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AuthenticationSchemeViewModel": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RegisterModelInputModel": {
+        "required": [
+          "email",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "maxLength": 100,
+            "minLength": 6,
+            "type": "string",
+            "format": "password"
+          },
+          "confirmPassword": {
+            "type": "string",
+            "format": "password"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OrgaUserViewModel": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "nombre": {
+            "type": "string"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserViewModel": {
+        "type": "object",
+        "properties": {
+          "lastLogin": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "id": {
+            "type": "string"
+          },
+          "userName": {
+            "type": "string"
+          },
+          "orgas": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrgaUserViewModel"
+            }
+          },
+          "apiKey": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Ejemplo": {
+        "required": [
+          "created",
+          "datos",
+          "fichero",
+          "modified",
+          "nombre",
+          "preview",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "fichero": {
+            "$ref": "#/components/schemas/Fichero"
+          },
+          "datos": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "nombre": {
+            "type": "string"
+          },
+          "preview": {
+            "$ref": "#/components/schemas/Fichero"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "id": {
+            "type": "string"
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "modified": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}
