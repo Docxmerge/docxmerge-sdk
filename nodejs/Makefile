@@ -5,7 +5,7 @@ update_api:
 	docker run --rm --network=host -v ${PWD}/src/swagger:/local openapitools/openapi-generator-cli generate -i ${SWAGGER_URL} -l typescript-node -o /local --additional-properties supportsES6=true
 	sudo chmod 777 -R ./src/swagger
 
-build: update_api
+build:
 	yarn
 	yarn build
 

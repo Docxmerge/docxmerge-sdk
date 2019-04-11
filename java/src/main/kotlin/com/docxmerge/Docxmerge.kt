@@ -1,89 +1,67 @@
 package com.docxmerge
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import io.swagger.client.ApiClient
-import io.swagger.client.api.ApiApi
-import io.swagger.client.api.TemplatesApi
-import io.swagger.client.auth.ApiKeyAuth
-import io.swagger.client.model.Report
-import io.swagger.client.model.TemplateListResponseModel
-import java.io.File
+import com.google.gson.Gson
+import org.apache.http.client.fluent.Request
+import org.apache.http.entity.ContentType
+import org.apache.http.entity.mime.MultipartEntityBuilder
+import java.io.Serializable
 
-
-open class Docxmerge(apiKey: String, private var tenant: String, url: String = "https://api.docxmerge.com") {
-    private var templatesApi: TemplatesApi
-    private var apiApi: ApiApi
-    private var apiClient: ApiClient = ApiClient()
-    private val mapper = ObjectMapper()
-
-    init {
-        val auth = apiClient.getAuthentication("ApiKey") as ApiKeyAuth
-        auth.apiKey = apiKey
-        apiClient.addDefaultHeader("ApiKey", apiKey)
-        apiClient.setApiKey(apiKey)
-        apiClient.basePath = url
-        templatesApi = TemplatesApi(apiClient)
-        apiApi = ApiApi(apiClient)
+open class Docxmerge(private var apiKey: String, private var url: String = "https://api.docxmerge.com") {
+    fun transformTemplate(templateName: String): ByteArray {
+        return Request.Post("${url}/api/v1/Admin/TransformTemplate?template=$templateName")
+            .addHeader("api-key", apiKey)
+            .execute().returnContent().asBytes()
     }
 
-    fun getTemplates(page: Int, size: Int): TemplateListResponseModel? {
-        return templatesApi.apiByTenantTemplatesGet(tenant, size, page)
+    fun transformFile(file: ByteArray): ByteArray {
+        val multipart = MultipartEntityBuilder.create()
+            .addBinaryBody("file", file, ContentType.APPLICATION_OCTET_STREAM, "file.docx")
+        return Request.Post("${url}/api/v1/Admin/TransformFile")
+            .addHeader("api-key", apiKey)
+            .body(multipart.build())
+            .execute().returnContent().asBytes()
     }
 
-    fun renderFile(document: File, data: Map<String, Any>): File? {
-        val dataFile = File.createTempFile("prefix-", "-json")
-
-        val text = mapper.writeValueAsString(data)
-        dataFile.writeText(text)
-        dataFile.deleteOnExit()
-        return apiApi.apiPrintPost(document, dataFile)
+    fun <T : Serializable> mergeTemplate(templateName: String, data: T): ByteArray {
+        return Request.Post("${url}/api/v1/Admin/MergeTemplate?template=$templateName")
+            .addHeader("api-key", apiKey)
+            .addHeader("Content-type", "application/json")
+            .bodyString(Companion.gson.toJson(data), ContentType.APPLICATION_JSON)
+            .execute().returnContent().asBytes()
     }
 
-    fun convertFile(document: File): File? {
-        return templatesApi.apiByTenantConvertPost(tenant, document)
+    fun <T : Serializable> mergeFile(file: ByteArray, data: T): ByteArray {
+        val multipart = MultipartEntityBuilder.create()
+            .addBinaryBody("file", file, ContentType.APPLICATION_OCTET_STREAM, "file.docx")
+            .addTextBody("data", Companion.gson.toJson(data), ContentType.APPLICATION_JSON)
+
+        return Request.Post("${url}/api/v1/Admin/TransformFile")
+            .addHeader("api-key", apiKey)
+            .body(multipart.build())
+            .execute().returnContent().asBytes()
     }
 
-    fun convertTemplate(
-        templateName: String, version: Int,
-        env: String,
-        attributes: Any
-    ): File? {
-        return templatesApi.apiByTenantTemplatesByTemplateNameConvertPost(
-            templateName,
-            tenant,
-            version,
-            false,
-            attributes,
-            env
-        )
+    fun <T : Serializable> mergeAndTransformTemplate(templateName: String, data: T): ByteArray {
+        return Request.Post("${url}/api/v1/Admin/MergeAndTransformTemplatePost?template=$templateName")
+            .addHeader("api-key", apiKey)
+            .addHeader("Content-type", "application/json")
+            .bodyString(Companion.gson.toJson(data), ContentType.APPLICATION_JSON)
+            .execute().returnContent().asBytes()
     }
 
-    fun renderTemplate(
-        templateName: String,
-        data: Map<String, Any>,
-        version: Int,
-        env: String,
-        attributes: Any
-    ): File? {
-        val report = templatesApi.apiByTenantTemplatesByTemplateNameRenderPost(
-            data,
-            templateName,
-            tenant,
-            version,
-            false,
-            attributes,
-            env
-        )
+    fun <T : Serializable> mergeAndTransformFile(file: ByteArray, data: T): ByteArray {
+        val multipart = MultipartEntityBuilder.create()
+            .addBinaryBody("file", file, ContentType.APPLICATION_OCTET_STREAM, "file.docx")
+            .addTextBody("data", Companion.gson.toJson(data), ContentType.APPLICATION_JSON)
 
-        return templatesApi.apiByTenantReportsByIdGet(report.id,tenant)
+        return Request.Post("${url}/api/v1/Admin/MergeAndTransform")
+            .addHeader("api-key", apiKey)
+            .body(multipart.build())
+            .execute().returnContent().asBytes()
     }
 
-    fun mergeDocx(document: File, data: Map<String, Any>): File? {
-        val dataFile = File.createTempFile("prefix-", "-json")
-
-        val text = mapper.writeValueAsString(data)
-        dataFile.writeText(text)
-        dataFile.deleteOnExit()
-        return templatesApi.apiByTenantMergePost(tenant, document, dataFile)
+    companion object {
+        private val gson = Gson()
     }
+
 }

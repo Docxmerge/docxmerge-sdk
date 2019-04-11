@@ -2,64 +2,72 @@ package com.docxmerge
 
 import org.junit.Test
 import java.io.File
-import java.net.URL
 
 class DocxmergeTest {
     @Test
-    fun convertFile() {
+    fun transformTemplate() {
         val docxmerge = getDocxmerge()
-        val template = getHelloWorld();
-        val pdf = docxmerge.convertFile(template)
-        val bytes = pdf!!.readBytes()
-        saveFile(bytes, "helloworld.pdf")
-    }
-
-    @Test
-    fun renderFile() {
-        val docxmerge = getDocxmerge()
-        val template = getHelloWorld();
-        val pdf = docxmerge.renderFile(template, hashMapOf<String, String>("hello_world" to "Hello world."))
-        val bytes = pdf!!.readBytes()
-        saveFile(bytes, "helloworld_merged.pdf")
-    }
-
-
-    @Test
-    fun renderTemplate() {
-        val docxmerge = getDocxmerge()
-        val template = getHelloWorld();
-        val pdf = docxmerge.renderTemplate(
-            "Hello world",
-            hashMapOf("hello_world" to "Hello world.."),
-            1,
-            "DRAFT",
-            HashMap<String, String>()
-        )
-        val bytes = pdf!!.readBytes()
-        saveFile(bytes, "helloworld_merged2.pdf")
-    }
-
-    @Test
-    fun convertTemplate() {
-        val docxmerge = getDocxmerge()
-        val pdf = docxmerge.convertTemplate("Hello world", 1, "DRAFT", HashMap<String, String>())
-        val bytes = pdf!!.readBytes()
+        val pdf = docxmerge.transformTemplate("hello-world")
+        val bytes = pdf
         saveFile(bytes, "helloworld1.pdf")
     }
 
+    @Test
+    fun transformFile() {
+        val docxmerge = getDocxmerge()
+        val pdf = docxmerge.transformFile(getHelloWorldBytes())
+        val bytes = pdf
+        saveFile(bytes, "helloworld2.pdf")
+    }
+
+    @Test
+    fun mergeTemplate() {
+        val docxmerge = getDocxmerge()
+        val map = hashMapOf("hello_world" to "Hello")
+        val pdf = docxmerge.mergeTemplate("hello-world", map)
+        val bytes = pdf
+        saveFile(bytes, "helloworld1.docx")
+    }
+
+    @Test
+    fun mergeFile() {
+        val docxmerge = getDocxmerge()
+        val map = hashMapOf("hello_world" to "Hello")
+        val pdf = docxmerge.mergeFile(getHelloWorldBytes(), map)
+        val bytes = pdf
+        saveFile(bytes, "helloworld2.docx")
+    }
+    @Test
+    fun mergeAndTransformTemplate() {
+        val docxmerge = getDocxmerge()
+        val map = hashMapOf("hello_world" to "Hello")
+        val pdf = docxmerge.mergeAndTransformTemplate("hello-world", map)
+        val bytes = pdf
+        saveFile(bytes, "helloworld1.docx")
+    }
+
+    @Test
+    fun mergeAndTransformFile() {
+        val docxmerge = getDocxmerge()
+        val map = hashMapOf("hello_world" to "Hello")
+        val pdf = docxmerge.mergeAndTransformFile(getHelloWorldBytes(), map)
+        val bytes = pdf
+        saveFile(bytes, "helloworld2.docx")
+    }
+
     companion object {
-        val apiKey = "8f22c304d0b44af2b03c2ad3d1aa5471"
-        val tenantId = "f60b0638-2f2e-4f92-b027-39cedfa06d4d"
+        val apiKey = "QTTSbTSii840rl4JdLP0xiJGJJmfE5"
     }
 
     private fun getDocxmerge(): Docxmerge {
-        return Docxmerge(apiKey, tenantId, "http://localhost:5030")
+        return Docxmerge(apiKey, "http://localhost:5101")
     }
 
     private fun saveFile(bytes: ByteArray, path: String) {
         val dir = File("tmp")
         dir.mkdirs()
         val file = File(dir, path)
+
         file.writeBytes(bytes)
     }
 
@@ -67,8 +75,17 @@ class DocxmergeTest {
         return getFile("helloworld.docx")
     }
 
+    private fun getHelloWorldBytes(): ByteArray {
+        return getFile("helloworld.docx").readBytes()
+    }
+
     private fun getFile(fileName: String): File {
         val resource = javaClass.classLoader.getResource(fileName)
         return File(resource.file)
+    }
+
+    private fun getFileBytes(fileName: String): ByteArray {
+        val resource = javaClass.classLoader.getResource(fileName)
+        return File(resource.file).readBytes()
     }
 }
