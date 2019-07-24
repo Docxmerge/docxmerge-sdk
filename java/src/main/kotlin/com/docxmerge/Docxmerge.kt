@@ -6,10 +6,15 @@ import org.apache.http.entity.ContentType
 import org.apache.http.entity.mime.MultipartEntityBuilder
 import java.io.Serializable
 
-open class Docxmerge(private var apiKey: String, private var url: String = "https://api.docxmerge.com") {
+open class Docxmerge(
+    private var apiKey: String,
+    private var url: String = "https://api.docxmerge.com",
+    private var tenant: String = "default"
+) {
     fun transformTemplate(templateName: String): ByteArray {
         return Request.Post("${url}/api/v1/Admin/TransformTemplate?template=$templateName")
             .addHeader("api-key", apiKey)
+            .addHeader("x-tenant", tenant)
             .execute().returnContent().asBytes()
     }
 
@@ -18,6 +23,7 @@ open class Docxmerge(private var apiKey: String, private var url: String = "http
             .addBinaryBody("file", file, ContentType.APPLICATION_OCTET_STREAM, "file.docx")
         return Request.Post("${url}/api/v1/Admin/TransformFile")
             .addHeader("api-key", apiKey)
+            .addHeader("x-tenant", tenant)
             .body(multipart.build())
             .execute().returnContent().asBytes()
     }
@@ -25,18 +31,20 @@ open class Docxmerge(private var apiKey: String, private var url: String = "http
     fun <T : Serializable> mergeTemplate(templateName: String, data: T): ByteArray {
         return Request.Post("${url}/api/v1/Admin/MergeTemplate?template=$templateName")
             .addHeader("api-key", apiKey)
+            .addHeader("x-tenant", tenant)
             .addHeader("Content-type", "application/json")
-            .bodyString(Companion.gson.toJson(data), ContentType.APPLICATION_JSON)
+            .bodyString(gson.toJson(data), ContentType.APPLICATION_JSON)
             .execute().returnContent().asBytes()
     }
 
     fun <T : Serializable> mergeFile(file: ByteArray, data: T): ByteArray {
         val multipart = MultipartEntityBuilder.create()
             .addBinaryBody("file", file, ContentType.APPLICATION_OCTET_STREAM, "file.docx")
-            .addTextBody("data", Companion.gson.toJson(data), ContentType.APPLICATION_JSON)
+            .addTextBody("data", gson.toJson(data), ContentType.APPLICATION_JSON)
 
         return Request.Post("${url}/api/v1/Admin/TransformFile")
             .addHeader("api-key", apiKey)
+            .addHeader("x-tenant", tenant)
             .body(multipart.build())
             .execute().returnContent().asBytes()
     }
@@ -44,18 +52,20 @@ open class Docxmerge(private var apiKey: String, private var url: String = "http
     fun <T : Serializable> mergeAndTransformTemplate(templateName: String, data: T): ByteArray {
         return Request.Post("${url}/api/v1/Admin/MergeAndTransformTemplatePost?template=$templateName")
             .addHeader("api-key", apiKey)
+            .addHeader("x-tenant", tenant)
             .addHeader("Content-type", "application/json")
-            .bodyString(Companion.gson.toJson(data), ContentType.APPLICATION_JSON)
+            .bodyString(gson.toJson(data), ContentType.APPLICATION_JSON)
             .execute().returnContent().asBytes()
     }
 
     fun <T : Serializable> mergeAndTransformFile(file: ByteArray, data: T): ByteArray {
         val multipart = MultipartEntityBuilder.create()
             .addBinaryBody("file", file, ContentType.APPLICATION_OCTET_STREAM, "file.docx")
-            .addTextBody("data", Companion.gson.toJson(data), ContentType.APPLICATION_JSON)
+            .addTextBody("data", gson.toJson(data), ContentType.APPLICATION_JSON)
 
         return Request.Post("${url}/api/v1/Admin/MergeAndTransform")
             .addHeader("api-key", apiKey)
+            .addHeader("x-tenant", tenant)
             .body(multipart.build())
             .execute().returnContent().asBytes()
     }

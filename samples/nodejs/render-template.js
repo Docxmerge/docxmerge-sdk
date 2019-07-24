@@ -20,7 +20,7 @@ const body = {
 }
 const headers = {
   "api-key": authKey,
-  "x-organizacion": "default-ppgegnn"
+  "x-tenant": "default-ppgegnn"
 }
 request
   .post({

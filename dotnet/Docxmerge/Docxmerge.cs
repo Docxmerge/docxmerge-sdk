@@ -11,13 +11,14 @@ namespace Docxmerge
     {
         private readonly HttpClient _httpClient;
 
-        public Docxmerge(string apikey, string baseUrl)
+        public Docxmerge(string apikey, string baseUrl, string tenant = "default")
         {
             _httpClient = new HttpClient
             {
                 BaseAddress = new Uri(baseUrl)
             };
             _httpClient.DefaultRequestHeaders.Add("api-key", apikey);
+            _httpClient.DefaultRequestHeaders.Add("x-tenant", tenant);
         }
 
 
