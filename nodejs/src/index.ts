@@ -8,77 +8,62 @@ class Docxmerge {
     request.RequiredUriUrl
   >
 
-  constructor(apiKey: string, baseUrl: string, tenant: string = "default") {
+  constructor(
+    apiKey: string,
+    tenant: string = "default",
+    baseUrl: string = "https://api.docxmerge.com",
+  ) {
     this.api = request.defaults({
       baseUrl: baseUrl,
       headers: { "api-key": apiKey, "x-tenant": tenant },
     })
   }
-  async transformTemplate(templateName: string): Promise<Stream> {
-    return new Promise<Stream>((resolve, reject) => {
-      const req = this.api.get(
-        `/api/v1/Admin/TransformTemplate?template=${templateName}`,
-      )
-      this.handleReq(req, resolve, reject)
-    })
-  }
-  transformFile(file: Stream): Promise<Stream> {
-    return new Promise<Stream>((resolve, reject) => {
-      const req = this.api.post(`/api/v1/Admin/TransformFile`, {
-        formData: { file },
-      })
-      this.handleReq(req, resolve, reject)
-    })
-  }
-  mergeTemplate(templateName: string, data: KeyValue): Promise<Stream> {
-    return new Promise<Stream>((resolve, reject) => {
-      const req = this.api.post(
-        `/api/v1/Admin/MergeTemplate?template=${templateName}`,
-        {
-          json: true,
-          body: data,
-        },
-      )
-      this.handleReq(req, resolve, reject)
-    })
-  }
-  mergeFile(file: Stream, data: KeyValue): Promise<Stream> {
-    return new Promise<Stream>((resolve, reject) => {
-      const req = this.api.post(`/api/v1/Admin/MergeFile`, {
-        formData: {
-          file,
-          data: JSON.stringify(data),
-        },
-      })
-      this.handleReq(req, resolve, reject)
-    })
-  }
-  mergeAndTransformTemplate(
+  renderTemplate(
     templateName: string,
-    data: KeyValue,
-  ): Promise<Stream> {
+    data: any,
+    conversionType: string,
+    version: string = "",
+  ) {
     return new Promise<Stream>((resolve, reject) => {
-      const req = this.api.post(
-        `/api/v1/Admin/MergeAndTransformTemplatePost?template=${templateName}`,
-        {
-          json: true,
-          body: data,
-        },
-      )
-      this.handleReq(req, resolve, reject)
-    })
-  }
-  mergeAndTransformFile(file: Stream, data: KeyValue): Promise<Stream> {
-    return new Promise<Stream>((resolve, reject) => {
-      const req = this.api.post(`/api/v1/Admin/MergeAndTransform`, {
-        formData: {
-          file,
-          data: JSON.stringify(data),
+      const req = this.api.post(`/api/v1/Admin/RenderTemplate`, {
+        json: true,
+        body: {
+          data,
+          version,
+          conversionType,
+          template: templateName,
         },
       })
       this.handleReq(req, resolve, reject)
     })
   }
+  renderUrl(url: string, data: any, conversionType: string) {
+    return new Promise<Stream>((resolve, reject) => {
+      const req = this.api.post(`/api/v1/Admin/RenderUrl`, {
+        json: true,
+        body: {
+          data,
+          url,
+          conversionType,
+        },
+      })
+      this.handleReq(req, resolve, reject)
+    })
+  }
+
+  renderFile(file: Stream, data: any, conversion: string) {
+    return new Promise<Stream>((resolve, reject) => {
+      const req = this.api.post(`/api/v1/Admin/RenderFile`, {
+        formData: {
+          file,
+          data: JSON.stringify(data),
+          tipoConversion: conversion,
+        },
+      })
+      this.handleReq(req, resolve, reject)
+    })
+  }
+
   private handleReq(
     req: request.Request,
     resolve: (value?: Stream | PromiseLike<Stream>) => void,
@@ -86,9 +71,7 @@ class Docxmerge {
   ) {
     req.on("response", res => {
       res.pause()
-      res.statusCode === 200
-        ? resolve(res)
-        : reject(`Bad status code ${res.statusCode}`)
+      res.statusCode === 200 ? resolve(res) : reject(res)
     })
     req.on("error", res => reject(res))
   }

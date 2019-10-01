@@ -1,36 +1,28 @@
 import json
 import unittest
-from docxmerge_sdk.main import Docxmerge
+from docxmerge_sdk import Docxmerge, ApiError
 
-api_key = "BUl4qf5pKZZpaSWL9bIuz6bgjJ5ka0"
+api_key = "26JZ5iPpD4U3b9z7lqkXeB2OGsbdF7"
 host = "http://localhost:5101"
 
 
 class TestDocxmerge(unittest.TestCase):
 
-    def test_transform_template(self):
-        docxmerge = Docxmerge(api_key, host)
-        docxmerge.transform_template("carta-pago")
+    def test_render_template(self):
+        docxmerge = Docxmerge(api_key, host=host)
+        docxmerge.render_template("hello_world2", data={
+            "hello_world": "HOLA"
+        }, conversion_type="PDF", version="latest")
 
-    def test_transform_file(self):
-        docxmerge = Docxmerge(api_key, host)
-        docxmerge.transform_file(open("./data/helloworld.docx", 'rb'))
+    def test_render_file(self):
+        docxmerge = Docxmerge(api_key, host=host)
+        docxmerge.render_file(open("./data/helloworld.docx", 'rb'), data={'hello_world': 'Hello world1'},
+                              conversion_type="PDF")
 
-    def test_merge_template(self):
-        docxmerge = Docxmerge(api_key, host)
-        docxmerge.merge_template("carta-pago", data={})
-
-    def test_merge_file(self):
-        docxmerge = Docxmerge(api_key, host)
-        docxmerge.merge_file(open("./data/helloworld.docx", 'rb'), data={'hello_world': 'Hello world1'})
-
-    def test_merge_and_transform_template(self):
-        docxmerge = Docxmerge(api_key, host)
-        docxmerge.merge_and_transform_template("carta-pago", {'hello_world': 'Hello world1'})
-
-    def test_merge_and_transform_file(self):
-        docxmerge = Docxmerge(api_key, host)
-        docxmerge.merge_and_transform_file(open("./data/helloworld.docx", 'rb'), {'hello_world': 'Hello world1'})
+    def test_render_url(self):
+        url = "https://api.docxmerge.com/api/v1/File/GetContenido?id=cdb9842d-5e38-4149-a06b-e1079a208fc3&download=true"
+        docxmerge = Docxmerge(api_key, host=host)
+        docxmerge.render_url(url, data={'hello_world': 'Hello world1'}, conversion_type="PDF")
 
 
 if __name__ == '__main__':

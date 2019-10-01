@@ -5,65 +5,64 @@ import org.apache.http.client.fluent.Request
 import org.apache.http.entity.ContentType
 import org.apache.http.entity.mime.MultipartEntityBuilder
 import java.io.Serializable
+import com.google.gson.GsonBuilder
+import java.util.HashMap
+
 
 open class Docxmerge(
     private var apiKey: String,
-    private var url: String = "https://api.docxmerge.com",
-    private var tenant: String = "default"
+    private var tenant: String = "default",
+    private var baseUrl: String = "https://api.docxmerge.com"
 ) {
-    fun transformTemplate(templateName: String): ByteArray {
-        return Request.Post("${url}/api/v1/Admin/TransformTemplate?template=$templateName")
-            .addHeader("api-key", apiKey)
-            .addHeader("x-tenant", tenant)
-            .execute().returnContent().asBytes()
-    }
+    fun <T : Serializable> renderTemplate(
+        templateName: String,
+        data: T,
+        conversionType: String,
+        version: String
+    ): ByteArray {
+        val map = HashMap<String, Any>()
+        map["version"] = version
+        map["data"] = data
+        map["template"] = templateName
+        map["conversionType"] = conversionType
 
-    fun transformFile(file: ByteArray): ByteArray {
-        val multipart = MultipartEntityBuilder.create()
-            .addBinaryBody("file", file, ContentType.APPLICATION_OCTET_STREAM, "file.docx")
-        return Request.Post("${url}/api/v1/Admin/TransformFile")
-            .addHeader("api-key", apiKey)
-            .addHeader("x-tenant", tenant)
-            .body(multipart.build())
-            .execute().returnContent().asBytes()
-    }
-
-    fun <T : Serializable> mergeTemplate(templateName: String, data: T): ByteArray {
-        return Request.Post("${url}/api/v1/Admin/MergeTemplate?template=$templateName")
+        return Request.Post("${baseUrl}/api/v1/Admin/RenderTemplate")
             .addHeader("api-key", apiKey)
             .addHeader("x-tenant", tenant)
             .addHeader("Content-type", "application/json")
-            .bodyString(gson.toJson(data), ContentType.APPLICATION_JSON)
+            .bodyString(gson.toJson(map), ContentType.APPLICATION_JSON)
             .execute().returnContent().asBytes()
     }
 
-    fun <T : Serializable> mergeFile(file: ByteArray, data: T): ByteArray {
-        val multipart = MultipartEntityBuilder.create()
-            .addBinaryBody("file", file, ContentType.APPLICATION_OCTET_STREAM, "file.docx")
-            .addTextBody("data", gson.toJson(data), ContentType.APPLICATION_JSON)
+    fun <T : Serializable> renderUrl(
+        url: String,
+        data: T,
+        conversionType: String
+    ): ByteArray {
+        val map = HashMap<String, Any>()
+        map["data"] = data
+        map["url"] = url
+        map["conversionType"] = conversionType
 
-        return Request.Post("${url}/api/v1/Admin/TransformFile")
-            .addHeader("api-key", apiKey)
-            .addHeader("x-tenant", tenant)
-            .body(multipart.build())
-            .execute().returnContent().asBytes()
-    }
-
-    fun <T : Serializable> mergeAndTransformTemplate(templateName: String, data: T): ByteArray {
-        return Request.Post("${url}/api/v1/Admin/MergeAndTransformTemplatePost?template=$templateName")
+        return Request.Post("${baseUrl}/api/v1/Admin/RenderUrl")
             .addHeader("api-key", apiKey)
             .addHeader("x-tenant", tenant)
             .addHeader("Content-type", "application/json")
-            .bodyString(gson.toJson(data), ContentType.APPLICATION_JSON)
+            .bodyString(gson.toJson(map), ContentType.APPLICATION_JSON)
             .execute().returnContent().asBytes()
     }
 
-    fun <T : Serializable> mergeAndTransformFile(file: ByteArray, data: T): ByteArray {
+    fun <T : Serializable> renderFile(
+        file: ByteArray,
+        data: T,
+        conversionType: String
+    ): ByteArray {
         val multipart = MultipartEntityBuilder.create()
             .addBinaryBody("file", file, ContentType.APPLICATION_OCTET_STREAM, "file.docx")
             .addTextBody("data", gson.toJson(data), ContentType.APPLICATION_JSON)
+            .addTextBody("conversionType", conversionType, ContentType.TEXT_PLAIN)
 
-        return Request.Post("${url}/api/v1/Admin/MergeAndTransform")
+        return Request.Post("${baseUrl}/api/v1/Admin/RenderFile")
             .addHeader("api-key", apiKey)
             .addHeader("x-tenant", tenant)
             .body(multipart.build())
